@@ -130,6 +130,8 @@ const GRILLES = {
 /* ===================================================== */
 
 const KEY_ID = (location.hash || "").replace("#","") || Object.keys(GRILLES)[0];
+// changer le #… dans la barre d'adresse recharge la page
+addEventListener("hashchange", () => location.reload());
 const G = GRILLES[KEY_ID];
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));

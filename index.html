@@ -2866,7 +2866,11 @@ const SPRIG = '<svg class="sprig" viewBox="0 0 64 40" fill="none" stroke="curren
 const ORDER = [7,14,2,21,10,18,1,23,5,12,16,3,20,9,24,6,13,19,11,4,22,8,15,17];
 const PALETTE = {or:["#ecd9a6","#c9a968","#fff8e4"], givre:["#dcedf3","#a9c8d4","#ffffff"], fete:["#f3cfc3","#e2a493","#fff1ea","#ecd9a6"], icone:["#fff3c4","#e2c47a","#ffffff","#c9a968","#f7e1a0"]};
 
-const PREVIEW = location.hash === "#apercu";
+const QS = new URLSearchParams(location.search);
+const PREVIEW = location.hash === "#apercu" || QS.has("apercu");
+// changer le #… dans la barre d'adresse recharge la page
+addEventListener("hashchange", () => location.reload());
+
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const KEY = "avent-" + CONFIG.annee;
 let opened = new Set();
@@ -3247,7 +3251,7 @@ closeBtn.addEventListener("click", closeOv);
 document.addEventListener("keydown", e => { if (e.key==="Escape" && !ov.hidden && !closeBtn.hidden) closeOv(); });
 
 /* ---------- Écran d'attente ---------- */
-const FORCE_WAIT = location.hash === "#attente";
+const FORCE_WAIT = location.hash === "#attente" || QS.has("attente");
 const waitEl = document.getElementById("wait"), calEl = document.getElementById("cal");
 let waitTimer = null;
 function isWaiting(){ return FORCE_WAIT || (!PREVIEW && new Date() < unlockDate(1)); }

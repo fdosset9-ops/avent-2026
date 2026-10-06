@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Strands personnalisée</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Concept : une grille de lettres sur velours vert ; les mots se tracent comme des fils, le mot-clé est le fil d'or. */
+:root{
+  --night:#0b1512; --pine:#12241f; --pine-hi:#1a332c;
+  --line:rgba(201,169,104,.32); --gold:#c9a968; --gold-hi:#ecd9a6;
+  --ink:#efe9dc; --muted:#8ea198; --paper:#f2ece0; --paper-ink:#1c2a24;
+  --found:#a9c8d9; --found-ink:#14303d; --span:#e9c96f; --span-ink:#3a2a06; --sel:#efe2c2; --hint:#ecd9a6;
+  --f-display:"Bodoni Moda","Didot","Times New Roman",serif;
+  --f-body:"Jost","Futura",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:radial-gradient(110% 60% at 50% -5%,var(--pine-hi) 0%,var(--night) 62%) fixed,var(--night);color:var(--ink);
+  font-family:var(--f-body);font-weight:300;font-size:15px;line-height:1.5;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:500px;margin:0 auto;position:relative;z-index:1}
+/* décor de fond */
+#glow{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(28vmax 28vmax at 6% 80%, rgba(125,36,48,.32), transparent 70%),
+    radial-gradient(24vmax 24vmax at 94% 22%, rgba(125,36,48,.24), transparent 70%),
+    radial-gradient(30vmax 22vmax at 70% 98%, rgba(201,169,104,.13), transparent 70%),
+    radial-gradient(18vmax 18vmax at 18% 12%, rgba(169,200,217,.10), transparent 70%)}
+#deco{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+#deco svg{position:absolute;fill:none;stroke:currentColor;stroke-width:1.1;stroke-linecap:round;stroke-linejoin:round;animation:drift 9s ease-in-out infinite}
+@keyframes drift{50%{transform:translateY(-6px) rotate(var(--r2,4deg))}}
+#snow{position:fixed;inset:0;pointer-events:none;z-index:0}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:20}
+header{padding-block:16px 6px;display:grid;gap:6px;text-align:center;justify-items:center}
+.eyebrow{font-weight:400;letter-spacing:.32em;text-transform:uppercase;font-size:11px;color:var(--gold)}
+.theme{border:1px solid var(--line);border-radius:3px;padding:6px 18px 8px;display:grid;gap:2px;min-width:min(300px,100%)}
+.theme small{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--muted)}
+.theme h1{margin:0;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:clamp(21px,5.4vw,29px);line-height:1.1;text-wrap:balance;color:var(--gold-hi)}
+.progress{font-size:13.5px;color:var(--muted)}
+.progress b{color:var(--ink);font-weight:500}
+
+.current{height:32px;display:grid;place-items:center;font-family:var(--f-body);font-weight:600;letter-spacing:.2em;font-size:18px;color:var(--gold-hi);text-transform:uppercase}
+.current.bad{animation:shake .4s;color:#e3a1a1}
+.current.good{color:var(--found)}
+.current.gold{color:var(--span)}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+
+.board{position:relative;width:min(360px,100%);aspect-ratio:6/8;max-width:100%;transition:width .25s ease;margin:0 auto;touch-action:none;user-select:none;-webkit-user-select:none}
+.board svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.board svg line{stroke-linecap:round;stroke-width:22}
+.cells{position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(8,1fr)}
+.cell{display:grid;place-items:center;border:0;background:transparent;padding:0;cursor:pointer;color:var(--ink);font:inherit}
+.cell span{width:76%;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;font-weight:500;font-size:var(--fs,clamp(17px,5.2vw,23px));letter-spacing:.02em;transition:background .15s,color .15s,transform .15s;position:relative}
+.cell:focus-visible span{outline:2px solid var(--gold-hi);outline-offset:1px}
+.cell.sel span{background:var(--sel);color:var(--paper-ink);transform:scale(1.04)}
+.cell.found span{background:var(--found);color:var(--found-ink)}
+.cell.span span{background:var(--span);color:var(--span-ink)}
+.cell.found,.cell.span{cursor:default}
+.cell.hint:not(.found):not(.span) span::after{content:"";position:absolute;inset:-3px;border-radius:50%;border:1.5px dashed var(--hint)}
+.cell.pop span{animation:pop .45s ease-out}
+@keyframes pop{40%{transform:scale(1.18)}}
+
+.actions{display:flex;justify-content:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn{font-family:var(--f-body);font-weight:400;font-size:12px;letter-spacing:.24em;text-transform:uppercase;border-radius:2px;padding:10px 14px;cursor:pointer;background:transparent;color:var(--ink);border:1px solid rgba(239,233,220,.3)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn:focus-visible{outline:1px solid #fff;outline-offset:3px}
+.help{text-align:center;font-size:12.5px;color:var(--muted);margin:12px auto 0;max-width:36ch}
+.words{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:16px}
+.words span{font-size:11px;letter-spacing:.16em;text-transform:uppercase;padding:4px 9px;border-radius:2px;background:rgba(169,200,217,.14);color:var(--found)}
+.words span.g{background:rgba(233,201,111,.16);color:var(--span)}
+.end{margin-top:20px;text-align:center;display:grid;gap:10px;justify-items:center}
+.end h2{margin:0;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:30px;color:var(--gold-hi)}
+.end p{margin:0;color:#cfc8b8;max-width:36ch}
+.end a{color:var(--gold-hi);font-size:12px;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--gold);padding-bottom:2px}
+.error{border:1px dashed var(--line);padding:18px;border-radius:3px;color:#e3c0c0;text-align:center}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+
+</head>
+<body>
+<div id="glow" aria-hidden="true"></div>
+<div id="deco" aria-hidden="true"></div>
+<canvas id="snow" aria-hidden="true"></canvas>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow">Strands personnalisée</div>
+    <div class="theme"><small>Thème</small><h1 id="theme">…</h1></div>
+    <div class="progress" id="progress"></div>
+  </header>
+  <div class="current" id="current" aria-live="polite"></div>
+  <div class="board" id="board">
+    <svg id="lines" viewBox="0 0 600 800" aria-hidden="true"></svg>
+    <div class="cells" id="cells" role="grid" aria-label="Grille de lettres"></div>
+  </div>
+  <div class="actions" id="actions">
+    <button class="btn" id="hintBtn" type="button">Indice</button>
+    <button class="btn" id="clearBtn" type="button">Effacer</button>
+  </div>
+  <p class="help" id="help">Glisse le doigt de lettre en lettre, dans toutes les directions. Ou touche les lettres une à une, puis touche la dernière une deuxième fois pour valider.</p>
+  <div class="words" id="words"></div>
+  <div class="end" id="end" hidden></div>
+</div>
+
+<script>
+/* =====================================================
+   À PERSONNALISER
+   Une grille par entrée. L'adresse choisit la grille :
+   fil.html#sapin → grille "sapin"
+   • theme    : l'indice affiché en haut
+   • filDor   : le mot-clé qui traverse la grille d'un bord à l'autre
+   • mots     : les autres mots du thème
+   • colonnes × lignes : taille de la grille (6 × 8 par défaut).
+     Le total des lettres (filDor + mots) doit faire exactement colonnes × lignes.
+     Les accents et espaces sont ignorés dans la grille.
+   • Le fil d'or doit avoir au moins autant de lettres que la grille a de colonnes.
+   • graine   : change ce nombre pour obtenir une autre disposition.
+   ===================================================== */
+const RETOUR = "index.html";
+const GRILLES = {
+  concerts: {
+    sousTitre: "Strands personnalisée",
+    theme: "Tu les as tous vus sur scène",
+    filDor: "En concert",
+    mots: ["Orelsan","Sinsemilia","Macklemore","Chappell Roan","Céline Dion","Theodora","Gorillaz","Naaman","Danyl","Shay","Mika","PLK"],
+    colonnes: 8, lignes: 12,
+    graine: 3,
+    indices: 4,
+    fin: "Douze artistes, des centaines de chansons, et sûrement quelques acouphènes.",
+  },
+  sapin: {
+    sousTitre: "Strands personnalisée",
+    theme: "Pour habiller le sapin",
+    filDor: "Décorations",
+    mots: ["Guirlande","Boule","Étoile","Bougie","Ruban","Cloche"],
+    graine: 7,
+    fin: "Le sapin est prêt. Il ne manque plus que les cadeaux.",
+  },
+  reveillon: {
+    sousTitre: "Strands personnalisée",
+    theme: "À table, le 24 au soir",
+    filDor: "Réveillon",
+    mots: ["Huîtres","Foie gras","Dinde","Marrons","Bûche","Chapons"],
+    graine: 3,
+    fin: "Tout est servi. Bon appétit.",
+  },
+};
+let HINTS = 3;
+/* ===================================================== */
+
+/* Générateur de grille : place les mots (chemins de cases adjacentes, 8 directions) pour couvrir exactement la grille. */
+function makeGenerator(W, H){
+  const N = W*H;
+  const NB = Array.from({length:N}, (_,i) => {
+    const x = i % W, y = (i/W)|0, out = [];
+    for (let dy=-1; dy<=1; dy++) for (let dx=-1; dx<=1; dx++){
+      if (!dx && !dy) continue; const nx = x+dx, ny = y+dy;
+      if (nx>=0 && nx<W && ny>=0 && ny<H) out.push(ny*W+nx);
+    }
+    return out;
+  });
+  function rng(seed){ let a = seed>>>0; return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a>>>15, 1|a); t = t + Math.imul(t ^ t>>>7, 61|t) ^ t; return ((t ^ t>>>14)>>>0)/4294967296; }; }
+  // deux segments diagonaux qui se croisent ? (on évite les X entre chemins)
+  function crosses(a, b, owner){
+    const ax = a % W, ay = (a/W)|0, bx = b % W, by = (b/W)|0;
+    if (ax === bx || ay === by) return false;
+    const c = ay*W+bx, d = by*W+ax; // l'autre diagonale du carré
+    return owner.diag.has(c+"-"+d) || owner.diag.has(d+"-"+c);
+  }
+  return function generate(words, spanIdx, seed, budget=4000, attempts=3000){
+    const R = rng(seed);
+    const shuffle = a => { for (let i=a.length-1;i>0;i--){ const j = (R()*(i+1))|0; [a[i],a[j]] = [a[j],a[i]]; } return a; };
+    const total = words.reduce((s,w) => s+w.length, 0);
+    if (total !== N) return {error:`Les mots totalisent ${total} lettres, il en faut exactement ${N}.`};
+    let steps = 0;
+    for (let attempt=0; attempt<attempts; attempt++){
+      steps = 0;
+      const cell = new Int16Array(N).fill(-1), paths = new Array(words.length), owner = {diag:new Set()};
+      const addDiag = p => { for (let i=1;i<p.length;i++){ const a=p[i-1], b=p[i]; if ((a%W)!==(b%W) && ((a/W)|0)!==((b/W)|0)) owner.diag.add(a+"-"+b); } };
+      const delDiag = p => { for (let i=1;i<p.length;i++) owner.diag.delete(p[i-1]+"-"+p[i]); };
+      // 1. spangram : d'un bord au bord opposé
+      const L = words[spanIdx].length, horiz = R() < .5 || L < H;
+      const onStart = i => horiz ? i % W === 0 : i < W;
+      const onEnd   = i => horiz ? i % W === W-1 : i >= N-W;
+      const starts = shuffle([...Array(N).keys()].filter(onStart));
+      let span = null;
+      const walk = (p) => {
+        if (++steps > budget) return false;
+        if (p.length === L) return onEnd(p[p.length-1]);
+        const last = p[p.length-1];
+        for (const n of shuffle(NB[last].slice())){
+          if (cell[n] !== -1) continue;
+          if (p.length < L-1 && onEnd(n) && R() < .7) continue; // évite de toucher l'arrivée trop tôt
+          if (crosses(last, n, owner)) continue;
+          cell[n] = spanIdx; p.push(n);
+          if (walk(p)) return true;
+          p.pop(); cell[n] = -1;
+        }
+        return false;
+      };
+      for (const s of starts.slice(0,3)){ cell[s] = spanIdx; const p = [s]; if (walk(p)){ span = p; break; } cell[s] = -1; }
+      if (!span) continue;
+      paths[spanIdx] = span; addDiag(span);
+      // 2. les autres mots
+      const minLen = rest => Math.min(...rest.map(i => words[i].length));
+      const okComponents = rest => {
+        if (!rest.length) return true;
+        const seen = new Uint8Array(N), m = minLen(rest);
+        for (let i=0;i<N;i++){
+          if (cell[i] !== -1 || seen[i]) continue;
+          let size = 0; const st = [i]; seen[i] = 1;
+          while (st.length){ const c = st.pop(); size++; for (const n of NB[c]) if (cell[n] === -1 && !seen[n]){ seen[n] = 1; st.push(n); } }
+          if (size < m) return false;
+        }
+        return true;
+      };
+      const fill = rest => {
+        if (++steps > budget) return false;
+        if (!rest.length) return true;
+        // case vide la plus contrainte
+        let best = -1, bestDeg = 9;
+        for (let i=0;i<N;i++) if (cell[i] === -1){ const d = NB[i].filter(n => cell[n] === -1).length; if (d < bestDeg){ bestDeg = d; best = i; } }
+        for (const wi of shuffle(rest.slice())){
+          const len = words[wi].length, others = rest.filter(x => x !== wi);
+          const grow = p => {
+            if (++steps > budget) return false;
+            if (p.length === len){
+              if (!okComponents(others)) return false;
+              paths[wi] = R() < .5 ? p.slice() : p.slice().reverse(); addDiag(paths[wi]);
+              if (fill(others)) return true;
+              delDiag(paths[wi]); return false;
+            }
+            const last = p[p.length-1];
+            for (const n of shuffle(NB[last].slice())){
+              if (cell[n] !== -1 || crosses(last, n, owner)) continue;
+              cell[n] = wi; p.push(n);
+              if (grow(p)) return true;
+              p.pop(); cell[n] = -1;
+            }
+            return false;
+          };
+          cell[best] = wi;
+          if (grow([best])) return true;
+          cell[best] = -1;
+        }
+        return false;
+      };
+      const rest = words.map((_,i) => i).filter(i => i !== spanIdx);
+      if (fill(rest)){
+        const letters = new Array(N);
+        paths.forEach((p,wi) => p.forEach((c,k) => letters[c] = words[wi][k]));
+        return {letters, paths};
+      }
+    }
+    return {error:"Impossible de placer ces mots. Change la graine ou l'un des mots."};
+  };
+}
+
+
+let W = 6, H = 8, N = 48;
+const KEY = (location.hash || "").replace("#","") || Object.keys(GRILLES)[0];
+const G = GRILLES[KEY];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm = w => w.normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase().replace(/Œ/g,"OE").replace(/Æ/g,"AE").replace(/[^A-Z]/g,"");
+const STORE = "fil2-" + KEY;
+
+let words, display, spanIdx, puzzle, found = new Map(), hinted = [], hintsLeft = HINTS, path = [], drag = null;
+
+function adj(a, b){ return Math.abs(a%W - b%W) <= 1 && Math.abs(((a/W)|0) - ((b/W)|0)) <= 1 && a !== b; }
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify({f:[...found.entries()], h:hinted, l:hintsLeft})); }catch(e){} }
+function load(){ try{ const s = JSON.parse(localStorage.getItem(STORE) || "null"); if (s){ found = new Map(s.f); hinted = s.h || []; hintsLeft = s.l ?? HINTS; } }catch(e){} }
+
+function cellOwner(c){ return puzzle.paths.findIndex(p => p.includes(c)); }
+
+function draw(){
+  const ctr = c => [ (c%W)*100+50, ((c/W)|0)*100+50 ];
+  let svg = "";
+  const seg = (p, col) => { for (let i=1;i<p.length;i++){ const [x1,y1] = ctr(p[i-1]), [x2,y2] = ctr(p[i]); svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}"/>`; } };
+  found.forEach((p,i) => seg(p, i === spanIdx ? "var(--span)" : "var(--found)"));
+  seg(path, "var(--sel)");
+  $("lines").innerHTML = svg;
+  const hintCells = new Set(hinted.filter(i => !found.has(i)).flatMap(i => puzzle.paths[i]));
+  document.querySelectorAll(".cell").forEach(el => {
+    const c = +el.dataset.c, o = cellOwner(c), f = found.has(o);
+    el.className = "cell" + (f ? (o === spanIdx ? " span" : " found") : "") + (path.includes(c) ? " sel" : "") + (hintCells.has(c) ? " hint" : "");
+    el.disabled = f;
+  });
+  $("current").textContent = path.map(c => puzzle.letters[c]).join("");
+  $("current").className = "current";
+  const n = found.size, tot = words.length;
+  $("progress").innerHTML = `<b>${n}</b> mot${n>1?"s":""} trouvé${n>1?"s":""} sur ${tot}`;
+  $("hintBtn").textContent = `Indice (${hintsLeft})`;
+  $("hintBtn").disabled = hintsLeft <= 0 || n === tot;
+  $("clearBtn").disabled = !path.length;
+  $("words").innerHTML = [...found.keys()].sort((a,b) => (a===spanIdx)-(b===spanIdx) || a-b).map(i => `<span class="${i===spanIdx?"g":""}">${esc(display[i])}</span>`).join("");
+  if (n === tot) finish();
+}
+
+function flash(text, cls){
+  const el = $("current"); el.textContent = text; el.className = "current"; void el.offsetWidth; el.classList.add(cls);
+  clearTimeout(flash.t); flash.t = setTimeout(() => { el.className = "current"; el.textContent = path.map(c => puzzle.letters[c]).join(""); }, 1300);
+}
+
+function submit(){
+  if (!path.length) return;
+  const word = path.map(c => puzzle.letters[c]).join("");
+  const p = path.slice(); path = [];
+  if (word.length < 3){ draw(); flash("Trop court", "bad"); return; }
+  // accepté dans les deux sens, et quel que soit le chemin, tant que ce sont les bonnes cases
+  const rev = word.split("").reverse().join(""), set = new Set(p);
+  const idx = words.findIndex((w,i) => (w === word || w === rev) && puzzle.paths[i].length === p.length && puzzle.paths[i].every(c => set.has(c)));
+  if (idx >= 0){
+    if (found.has(idx)){ draw(); flash("Déjà trouvé", "bad"); return; }
+    found.set(idx, p); save(); draw();
+    p.forEach((c,k) => setTimeout(() => { const el = document.querySelector(`.cell[data-c="${c}"]`); if (el){ el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); } }, k*45));
+    flash(idx === spanIdx ? "Le fil d'or !" : display[idx], idx === spanIdx ? "gold" : "good");
+    if (idx === spanIdx && found.size < words.length) confetti(.35);
+    return;
+  }
+  draw();
+  const same = words.findIndex(w => w === word || w === rev);
+  flash(same >= 0 && !found.has(same) ? "Bon mot, autre chemin" : "Pas dans le thème", "bad");
+}
+
+/* ---- saisie : glisser ou toucher ---- */
+function cellAt(x, y){ const el = document.elementFromPoint(x, y); const c = el && el.closest(".cell"); return c && !c.disabled ? +c.dataset.c : null; }
+function extend(c){
+  if (c === null) return;
+  const last = path[path.length-1];
+  if (path.length >= 2 && c === path[path.length-2]){ path.pop(); return true; }
+  if (path.includes(c)) return false;
+  if (last === undefined || adj(last, c)){ path.push(c); return true; }
+  return false;
+}
+$("cells").addEventListener("pointerdown", e => {
+  const c = cellAt(e.clientX, e.clientY); if (c === null) return;
+  e.preventDefault();
+  const last = path[path.length-1];
+  if (c === last && path.length > 1){ submit(); return; }        // second toucher sur la dernière lettre
+  if (!path.length || !(adj(last, c) && !path.includes(c)) && c !== path[path.length-2]) path = [];
+  extend(c); drag = {moved:false}; draw();
+});
+addEventListener("pointermove", e => {
+  if (!drag) return;
+  const c = cellAt(e.clientX, e.clientY);
+  if (c !== null && c !== path[path.length-1] && extend(c)){ drag.moved = true; draw(); }
+});
+addEventListener("pointerup", () => { if (drag && drag.moved && path.length > 1) submit(); drag = null; });
+addEventListener("pointercancel", () => { drag = null; });
+$("clearBtn").addEventListener("click", () => { path = []; draw(); });
+$("cells").addEventListener("keydown", e => {
+  const el = e.target.closest(".cell"); if (!el) return;
+  if (e.key === "Enter" || e.key === " "){ e.preventDefault(); const c = +el.dataset.c; if (c === path[path.length-1]) submit(); else { if (!extend(c)) { path = []; extend(c); } draw(); } }
+});
+
+$("hintBtn").addEventListener("click", () => {
+  if (hintsLeft <= 0) return;
+  const pool = words.map((_,i) => i).filter(i => !found.has(i) && !hinted.includes(i));
+  const nonSpan = pool.filter(i => i !== spanIdx);
+  const pick = (nonSpan.length ? nonSpan : pool)[0];
+  if (pick === undefined) return;
+  hinted.push(pick); hintsLeft--; save(); draw();
+  flash(`${words[pick].length} lettres, en pointillés`, "good");
+});
+
+function finish(){
+  if (!$("end").hidden) return;
+  if (!finish.loaded) confetti(1.2);
+  $("actions").hidden = true; $("help").hidden = true;
+  $("end").hidden = false;
+  $("end").innerHTML = `<h2>Grille terminée</h2><p>${esc(G.fin || "Bravo.")}</p>
+    <p style="font-size:13px;color:var(--muted)">${hintsLeft === HINTS ? "Sans aucun indice." : `${HINTS-hintsLeft} indice${HINTS-hintsLeft>1?"s":""} utilisé${HINTS-hintsLeft>1?"s":""}.`}</p>
+    ${RETOUR ? `<a href="${esc(RETOUR)}">Revenir au calendrier</a>` : ""}`;
+}
+
+function init(){
+  if (!G){ $("board").outerHTML = `<div class="error">Cette grille n'existe pas encore.</div>`; $("actions").hidden = true; return; }
+  document.title = "Strands personnalisée · " + G.theme;
+  $("eyebrow").textContent = G.sousTitre || "Strands personnalisée";
+  $("theme").textContent = G.theme;
+  W = G.colonnes || 6; H = G.lignes || 8; N = W*H; HINTS = G.indices ?? 3; hintsLeft = HINTS;
+  const board = $("board");
+  board.style.aspectRatio = `${W}/${H}`;
+  board.style.setProperty("--fs", W > 6 ? "clamp(14px,4.2vw,21px)" : "clamp(17px,5.2vw,23px)");
+  $("cells").style.gridTemplateColumns = `repeat(${W},1fr)`;
+  $("cells").style.gridTemplateRows = `repeat(${H},1fr)`;
+  $("lines").setAttribute("viewBox", `0 0 ${W*100} ${H*100}`);
+  display = [G.filDor, ...G.mots]; words = display.map(norm); spanIdx = 0;
+  puzzle = makeGenerator(W, H)(words, spanIdx, G.graine || 1);
+  if (puzzle.error){ $("board").outerHTML = `<div class="error">${esc(puzzle.error)}</div>`; $("actions").hidden = true; return; }
+  $("cells").innerHTML = puzzle.letters.map((l,c) => `<button class="cell" type="button" data-c="${c}" aria-label="${l}"><span>${l}</span></button>`).join("");
+  load(); finish.loaded = found.size === words.length; draw(); finish.loaded = false; fit();
+}
+/* ---- taille : la grille tient dans l'écran ---- */
+function fit(){
+  const board = $("board"); if (!board || !board.isConnected) return;
+  const wrapW = document.querySelector(".wrap").clientWidth;
+  const top = board.getBoundingClientRect().top + scrollY;
+  const below = $("actions").offsetHeight + 22;
+  const avail = Math.max(240, innerHeight - top - below);
+  const fitW = Math.min(W*58, wrapW, avail * W / H);
+  board.style.width = fitW + "px";
+}
+addEventListener("resize", fit);
+
+/* ---- confettis ---- */
+const confetti = (function(){
+  const c = document.getElementById("confetti"), x = c.getContext("2d"); let w, h, parts = [], run = false;
+  const cols = ["#e9c96f","#ecd9a6","#a9c8d9","#d9a7b8","#f2ece0","#a3424e","#a9c79f"];
+  function size(){ const d = Math.min(2, devicePixelRatio||1); w = innerWidth; h = innerHeight; c.width = w*d; c.height = h*d; c.style.width = w+"px"; c.style.height = h+"px"; x.setTransform(d,0,0,d,0,0); }
+  size(); addEventListener("resize", size);
+  function piece(px, py, ang, sp){ return {x:px, y:py, vx:Math.cos(ang)*sp, vy:Math.sin(ang)*sp, g:.16+Math.random()*.08, w:5+Math.random()*6, h:8+Math.random()*8, r:Math.random()*6, vr:(Math.random()-.5)*.35, t:Math.random()*6, c:cols[(Math.random()*cols.length)|0], life:0}; }
+  function tick(){
+    x.clearRect(0,0,w,h);
+    parts = parts.filter(p => p.y < h+30 && p.life < 600);
+    for (const p of parts){
+      p.life++; p.vx *= .99; p.vy = p.vy*.99 + p.g; p.x += p.vx + Math.sin(p.t += .08)*.6; p.y += p.vy; p.r += p.vr;
+      x.save(); x.translate(p.x,p.y); x.rotate(p.r); x.scale(1, Math.cos(p.t)); x.fillStyle = p.c; x.fillRect(-p.w/2,-p.h/2,p.w,p.h); x.restore();
+    }
+    if (parts.length) requestAnimationFrame(tick); else run = false;
+  }
+  return function(power=1){
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const n = Math.round(160*power);
+    for (let i=0;i<n;i++){
+      const side = i % 2 ? 1 : -1;
+      parts.push(piece(side > 0 ? -10 : w+10, h*.75, side > 0 ? -Math.PI/3 - Math.random()*.5 : -2*Math.PI/3 + Math.random()*.5, 9+Math.random()*10));
+    }
+    if (power >= 1) for (let i=0;i<120;i++) parts.push(piece(Math.random()*w, -20-Math.random()*h*.5, Math.PI/2, 1+Math.random()*2));
+    if (!run){ run = true; requestAnimationFrame(tick); }
+  };
+})();
+
+init();
+
+/* ---- décor : notes, micros, vinyles… et un peu de Noël ---- */
+(function(){
+  const reduceM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const S = {
+    note:'<path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/>',
+    croche:'<path d="M10 18V4c3 1 6 3 6 7"/><circle cx="7.5" cy="18" r="2.5"/>',
+    micro:'<rect x="9" y="2.5" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M8.5 21h7"/>',
+    vinyle:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 5.5a6.5 6.5 0 0 1 6.5 6.5"/>',
+    casque:'<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="1.5"/><rect x="17" y="14" width="4" height="6" rx="1.5"/>',
+    guitare:'<path d="M14 10l6-6M18.5 2.5l3 3"/><path d="M13 11c-1.5-1.5-4-1-5 .5-.6.9-.4 1.8-1.4 2.3C5 14.5 4 16 5 18s3.5 2.5 5 1.5c1-.7 1-1.8 1.9-2.3 1.4-.8 2.6-2.7 1.1-6.2z"/><circle cx="9.5" cy="15" r="1.2"/>',
+    etoile:'<path d="M12 2.5l2.6 6 6.4.6-4.9 4.2 1.5 6.3L12 16.3l-5.6 3.3 1.5-6.3L3 9.1l6.4-.6z"/>',
+    flocon:'<path d="M12 2v20M3.3 7l17.4 10M3.3 17 20.7 7M9.5 3.5 12 5.5l2.5-2M9.5 20.5 12 18.5l2.5 2"/>',
+  };
+  const keys = Object.keys(S), cols = ["#c9a968","#c9a968","#c9a968","#a3424e","#a9c8d4"];
+  function draw(){
+    const w = innerWidth, n = w < 640 ? 14 : 26, gc = w < 640 ? 3 : 6, gr = Math.ceil(n/gc);
+    let seed = 11, rnd = () => (seed = (seed*9301 + 49297) % 233280) / 233280, html = "";
+    for (let i=0;i<n;i++){
+      const cx = (i % gc + .15 + rnd()*.7) / gc * 100, cy = (Math.floor(i/gc) + .15 + rnd()*.7) / gr * 100;
+      const k = keys[Math.floor(rnd()*keys.length)], sz = 22 + rnd()*26, r = Math.round(rnd()*40-20);
+      html += `<svg viewBox="0 0 24 24" style="left:${cx.toFixed(1)}%;top:${cy.toFixed(1)}%;width:${sz|0}px;height:${sz|0}px;rotate:${r}deg;opacity:${(.09+rnd()*.1).toFixed(2)};color:${cols[Math.floor(rnd()*cols.length)]};animation-delay:-${(rnd()*9).toFixed(1)}s;--r2:${r>0?3:-3}deg">${S[k]}</svg>`;
+    }
+    document.getElementById("deco").innerHTML = html;
+  }
+  draw(); addEventListener("resize", draw);
+  if (reduceM) return;
+  const c = document.getElementById("snow"), x = c.getContext("2d"); let w, h, f = [];
+  function size(){ const d = Math.min(2, devicePixelRatio||1); w = innerWidth; h = innerHeight; c.width = w*d; c.height = h*d; c.style.width = w+"px"; c.style.height = h+"px"; x.setTransform(d,0,0,d,0,0);
+    f = Array.from({length:Math.min(110, Math.round(w/9))}, () => { const z = Math.random(); return {x:Math.random()*w, y:Math.random()*h, z, r:.5+z*2.2, s:.2+z*.7, o:Math.random()*6.3, a:.2+z*.5}; }); }
+  size(); addEventListener("resize", size);
+  (function tick(){ x.clearRect(0,0,w,h); x.fillStyle = "#f3f1ea";
+    for (const p of f){ p.y += p.s; p.o += .007; p.x += Math.sin(p.o)*(.2+p.z*.3); if (p.y > h+5){ p.y = -5; p.x = Math.random()*w; } x.globalAlpha = p.a; x.beginPath(); x.arc(p.x,p.y,p.r,0,7); x.fill(); }
+    x.globalAlpha = 1; requestAnimationFrame(tick); })();
+})();
+</script>
+
+</body>
+</html>

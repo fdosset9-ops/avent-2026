@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Les Liens de Jeanne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Concept : le même papier vert sapin et or que le calendrier ; seize étiquettes à regrouper par quatre. */
+:root{
+  --night:#0b1512; --pine:#12241f; --pine-hi:#1a332c;
+  --line:rgba(201,169,104,.32); --gold:#c9a968; --gold-hi:#ecd9a6;
+  --ink:#efe9dc; --muted:#8ea198; --paper:#f2ece0; --paper-ink:#1c2a24; --berry:#7d2430;
+  --g1:#e9d394; --g2:#a9c79f; --g3:#a9c8d9; --g4:#d9a7b8;
+  --f-display:"Bodoni Moda","Didot","Times New Roman",serif;
+  --f-body:"Jost","Futura",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:radial-gradient(110% 60% at 50% -5%,var(--pine-hi) 0%,var(--night) 62%) fixed,var(--night);color:var(--ink);
+  font-family:var(--f-body);font-weight:300;font-size:15px;line-height:1.5;padding-inline:16px;padding-block:0 48px}
+.wrap{max-width:560px;margin:0 auto}
+header{padding-block:40px 22px;display:grid;gap:10px}
+.eyebrow{font-weight:400;letter-spacing:.32em;text-transform:uppercase;font-size:11px;color:var(--gold)}
+h1{font-family:var(--f-display);font-style:italic;font-weight:400;font-size:clamp(34px,8vw,52px);line-height:1;margin:0;text-wrap:balance}
+h1 em{font-style:normal;font-weight:500;color:var(--gold-hi)}
+.lead{margin:0;color:#cfc8b8;max-width:44ch}
+
+.board{display:grid;gap:8px}
+.solved{display:grid;gap:8px}
+.band{border-radius:3px;padding:12px 10px;text-align:center;color:var(--paper-ink);animation:bandin .5s cubic-bezier(.2,.85,.25,1) both}
+.band b{display:block;font-family:var(--f-display);font-style:italic;font-weight:500;font-size:19px;line-height:1.15}
+.band span{display:block;margin-top:3px;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:500}
+.band.l1{background:var(--g1)}.band.l2{background:var(--g2)}.band.l3{background:var(--g3)}.band.l4{background:var(--g4)}
+.band.missed{opacity:.75}
+@keyframes bandin{from{opacity:0;transform:scale(.94)}}
+
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tile{aspect-ratio:1.25;min-width:0;border-radius:3px;border:1px solid var(--line);background:var(--paper);color:var(--paper-ink);
+  font-family:var(--f-body);font-weight:600;letter-spacing:.04em;text-transform:uppercase;font-size:clamp(10.5px,2.9vw,14px);line-height:1.15;
+  padding:4px;cursor:pointer;display:grid;place-items:center;text-align:center;overflow-wrap:anywhere;hyphens:auto;transition:transform .15s,background .15s,color .15s}
+.tile:hover{transform:translateY(-1px)}
+.tile:focus-visible{outline:2px solid var(--gold-hi);outline-offset:2px}
+.tile.sel{background:#3b5a4f;color:var(--ink);border-color:var(--gold)}
+.tile.jump{animation:jump .35s ease-out}
+.tile.shake{animation:shake .4s}
+@keyframes jump{40%{transform:translateY(-8px)}}
+@keyframes shake{20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+
+.mistakes{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:16px;font-size:13px;color:var(--muted)}
+.mistakes i{width:10px;height:10px;border-radius:50%;background:var(--gold);display:inline-block;transition:opacity .3s,transform .3s}
+.mistakes i.used{opacity:.15;transform:scale(.7)}
+.controls{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:18px}
+.btn{font-family:var(--f-body);font-weight:400;font-size:12px;letter-spacing:.24em;text-transform:uppercase;border-radius:2px;padding:12px 18px;cursor:pointer;
+  background:transparent;color:var(--ink);border:1px solid rgba(239,233,220,.3)}
+.btn.main{color:var(--night);background:var(--gold-hi);border-color:var(--gold-hi)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn:focus-visible{outline:1px solid #fff;outline-offset:3px}
+
+.end{margin-top:22px;text-align:center;display:grid;gap:10px;justify-items:center}
+.end h2{margin:0;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:30px;color:var(--gold-hi)}
+.end p{margin:0;color:#cfc8b8;max-width:38ch}
+.end a{color:var(--gold-hi);font-size:12px;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--gold);padding-bottom:2px}
+#toast{position:fixed;left:50%;top:calc(18px + env(safe-area-inset-top,0px));transform:translate(-50%,-10px);opacity:0;transition:.25s;z-index:10;
+  background:var(--paper);color:var(--paper-ink);padding:9px 16px;border-radius:2px;font-weight:500;font-size:14px;pointer-events:none;max-width:calc(100% - 32px)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.missing{border:1px dashed var(--line);border-radius:3px;padding:20px;text-align:center;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow">Les liens</div>
+    <h1 id="title">Seize mots, <em>quatre groupes</em></h1>
+    <p class="lead" id="lead">Trouve les quatre groupes de quatre mots qui ont quelque chose en commun. Sélectionne quatre mots, puis valide. Tu as droit à quatre erreurs.</p>
+  </header>
+  <div class="board">
+    <div class="solved" id="solved"></div>
+    <div class="grid" id="grid" role="group" aria-label="Mots à regrouper"></div>
+  </div>
+  <div class="mistakes" id="mistakes" aria-live="polite"></div>
+  <div class="controls" id="controls">
+    <button class="btn" id="shuffle" type="button">Mélanger</button>
+    <button class="btn" id="clear" type="button">Désélectionner</button>
+    <button class="btn main" id="submit" type="button" disabled>Valider</button>
+  </div>
+  <div class="end" id="end" hidden></div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =====================================================
+   À PERSONNALISER
+   Une grille par jour. L'adresse choisit la grille :
+   liens.html#j7  → grille "j7"     liens.html#j21 → grille "j21"
+   niveau : 1 (le plus facile, doré) → 4 (le plus retors, rose)
+   Les mots peuvent contenir des espaces et des accents.
+   ===================================================== */
+const RETOUR = "index.html";   // lien « Revenir au calendrier »
+const GRILLES = {
+  j7: {
+    titre: "Les liens de Jeanne",
+    sousTitre: "7 décembre",
+    fin: "Bravo. Le 21, ce sera plus vicieux.",
+    groupes: [
+      {niveau:1, nom:"Prix littéraires",                  mots:["DÉCEMBRE","FEMINA","MÉDICIS","RENAUDOT"]},
+      {niveau:2, nom:"Ils ont épousé une héroïne de Sex and the City", mots:["STEVE","HARRY","TREY","BIG"]},
+      {niveau:3, nom:"Festivals de musique",              mots:["BEAUREGARD","SOLIDAYS","GAROROCK","MAIN SQUARE"]},
+      {niveau:4, nom:"___ de lecture",                    mots:["FICHE","SALLE","CLUB","COMITÉ"]},
+    ],
+  },
+  j21: {
+    titre: "Les liens, le retour",
+    sousTitre: "21 décembre",
+    fin: "Grille terminée. Plus que trois jours avant Noël.",
+    groupes: [
+      {niveau:1, nom:"Au festival",                      mots:["BRACELET","CAMPING","FOSSE","LINE-UP"]},
+      {niveau:2, nom:"Le New York de Carrie",            mots:["COSMOPOLITAN","MANOLO","TUTU","CUPCAKE"]},
+      {niveau:3, nom:"___ de poche",                     mots:["LIVRE","ÉDITION","LAMPE","ARGENT"]},
+      {niveau:4, nom:"Cachent un genre littéraire",      mots:["ESSAIM","CONTENU","POLAROÏD","AFFABLE"]},
+    ],
+  },
+};
+/* ===================================================== */
+
+const KEY_ID = (location.hash || "").replace("#","") || Object.keys(GRILLES)[0];
+const G = GRILLES[KEY_ID];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const MAX_ERR = 4, STORE = "liens-v3-" + KEY_ID;
+let words = [], selected = new Set(), found = [], errors = 0, tried = new Set(), over = false;
+
+function toast(t){ const el = $("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 1800); }
+function shuffleArr(a){ for (let i=a.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [a[i],a[j]] = [a[j],a[i]]; } return a; }
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify({found, sp:found.solvedByPlayer, errors, tried:[...tried], over})); }catch(e){} }
+function load(){ try{ const s = JSON.parse(localStorage.getItem(STORE) || "null"); if (s){ found = s.found || []; found.solvedByPlayer = s.sp ?? found.length; errors = s.errors || 0; tried = new Set(s.tried || []); over = !!s.over; } }catch(e){} }
+
+function groupOf(w){ return G.groupes.findIndex(g => g.mots.includes(w)); }
+
+function render(){
+  const sorted = found.map(i => G.groupes[i]);
+  $("solved").innerHTML = sorted.map((g,k) => `<div class="band l${g.niveau}${over && errors>=MAX_ERR && k>=found.solvedByPlayer ? " missed":""}"><b>${esc(g.nom)}</b><span>${g.mots.map(esc).join(" · ")}</span></div>`).join("");
+  const remaining = words.filter(w => !found.includes(groupOf(w)));
+  $("grid").innerHTML = remaining.map(w => `<button class="tile${selected.has(w)?" sel":""}" type="button" data-w="${esc(w)}" aria-pressed="${selected.has(w)}">${esc(w)}</button>`).join("");
+  $("grid").hidden = remaining.length === 0;
+  $("mistakes").innerHTML = over ? "" : `<span>Erreurs restantes</span>${Array.from({length:MAX_ERR},(_,i)=>`<i class="${i < errors ? "used":""}"></i>`).join("")}`;
+  $("submit").disabled = selected.size !== 4;
+  $("clear").disabled = selected.size === 0;
+  $("controls").hidden = over;
+  if (over) showEnd();
+}
+
+function showEnd(){
+  const won = errors < MAX_ERR;
+  $("end").hidden = false;
+  $("end").innerHTML = `<h2>${won ? "Bien joué" : "Perdu, cette fois"}</h2>
+    <p>${won ? esc(G.fin || "Grille terminée.") : "Les groupes restants sont révélés plus haut. Tu feras mieux la prochaine fois."}</p>
+    <p style="font-size:13px;color:var(--muted)">${won ? (errors === 0 ? "Sans aucune erreur." : `${errors} erreur${errors>1?"s":""}.`) : ""}</p>
+    ${RETOUR ? `<a href="${esc(RETOUR)}">Revenir au calendrier</a>` : ""}`;
+}
+
+$("grid").addEventListener("click", e => {
+  const t = e.target.closest(".tile"); if (!t || over) return;
+  const w = t.dataset.w;
+  if (selected.has(w)) selected.delete(w);
+  else if (selected.size < 4) selected.add(w);
+  render();
+});
+$("shuffle").addEventListener("click", () => { shuffleArr(words); render(); });
+$("clear").addEventListener("click", () => { selected.clear(); render(); });
+$("submit").addEventListener("click", submit);
+
+function submit(){
+  if (selected.size !== 4 || over) return;
+  const sel = [...selected], key = sel.slice().sort().join("|");
+  if (tried.has(key)){ toast("Déjà essayé"); return; }
+  tried.add(key);
+  // petite animation de saut, mot par mot
+  sel.forEach((w,i) => setTimeout(() => { const el = document.querySelector(`.tile[data-w="${CSS.escape(w)}"]`); if (el){ el.classList.remove("jump"); void el.offsetWidth; el.classList.add("jump"); } }, i*90));
+  setTimeout(() => {
+    const counts = {}; sel.forEach(w => { const g = groupOf(w); counts[g] = (counts[g]||0) + 1; });
+    const best = Math.max(...Object.values(counts));
+    if (best === 4){
+      found.push(groupOf(sel[0])); found.solvedByPlayer = found.length;
+      selected.clear();
+      if (found.length === 4){ over = true; toast(["Parfait","Impressionnant","Bravo"][Math.min(errors,2)]); }
+      save(); render();
+    } else {
+      errors++;
+      document.querySelectorAll(".tile.sel").forEach(el => { el.classList.remove("shake"); void el.offsetWidth; el.classList.add("shake"); });
+      toast(best === 3 ? "À un mot près" : errors >= MAX_ERR ? "Plus d'essais" : "Raté");
+      if (errors >= MAX_ERR){
+        over = true; found.solvedByPlayer = found.length; selected.clear();
+        setTimeout(() => {
+          G.groupes.forEach((g,i) => { if (!found.includes(i)) found.push(i); });
+          save(); render();
+        }, 700);
+      } else { save(); setTimeout(render, 420); }
+    }
+  }, 4*90 + 200);
+}
+
+function init(){
+  if (!G){
+    $("grid").outerHTML = `<div class="missing">Cette grille n'existe pas encore.</div>`;
+    $("controls").hidden = true; return;
+  }
+  document.title = G.titre;
+  $("eyebrow").textContent = G.sousTitre || "Les liens";
+  $("title").innerHTML = esc(G.titre).replace(/^(\S+\s\S+)\s(.*)$/, "$1 <em>$2</em>");
+  words = shuffleArr(G.groupes.flatMap(g => g.mots));
+  load();
+  if (found.solvedByPlayer === undefined) found.solvedByPlayer = found.length;
+  render();
+}
+init();
+</script>
+
+</body>
+</html>

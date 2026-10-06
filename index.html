@@ -404,7 +404,7 @@ const CONFIG = {
   // écran affiché avant le 1er décembre
   messageAttente: "Vingt-quatre cases t'attendent, une par matin jusqu'à Noël. D'ici là, rien ne sert de revenir tous les jours. Mais tu peux.",
   // message caché derrière la boule dorée
-  secret: {titre:"Tu l'as trouvée", texte:["Il n'y avait que vingt-quatre cases. Celle-ci, c'est la vingt-cinquième.","Bon pour un câlin, valable sans date limite et autant de fois que tu veux."]}
+  secret: {titre:"Tu l'as trouvée", texte:["Il n'y avait que vingt-quatre cases. Celle-ci, c'est la vingt-cinquième.","..."]}
 };
 
 // tier   : "or" (révélation courte), "givre" (rare : révélation longue + cachet),
@@ -418,25 +418,25 @@ const CONFIG = {
 const JOURS = [
   /* 1 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"",
    titre:"Mots croisés, spécial François",
-   texte:"Pour commencer, une grille entièrement consacrée à moi. Toutes les réponses sont quelque part dans nos conversations. Me demander de l'aide compte comme de la triche."},
+   texte:"Pour commencer, une grille entièrement crée par moi. Toutes les réponses sont quelque part dans nos conversations, nos souvenirs."},
   /* 2 */ {cat:"CAD", tier:"givre", quoi:"Vernis", nom:"Vernis", acces:"paquet",
    titre:"Une couleur pour décembre",
-   texte:"Un petit flacon pour des ongles de fête. Je n'ai demandé conseil à personne et j'assume entièrement mon choix."},
+   texte:"Un petit flacon pour des ongles de fête. Encore du rouge, en espérant que la couleur change un peu."},
   /* 3 */ {cat:"JEU", tier:"or", quoi:"Puzzle", nom:"Puzzle", acces:"lien", lien:"",
    titre:"Un puzzle à reconstituer",
-   texte:"Une photo qui compte, découpée en morceaux. À toi de remettre les pièces en place, sans tricher avec la miniature."},
+   texte:"Une photo qui compte. À toi de remettre les pièces en place."},
   /* 4 */ {cat:"CAD", tier:"or", quoi:"Origami", nom:"Origami", acces:"paquet",
    titre:"Plié pour toi",
-   texte:"Un origami fait main, avec beaucoup de patience et un nombre de ratés que je préfère garder secret."},
+   texte:"Un origami fait main, avec beaucoup de patience et un nombre de ratés que je préfère garder secret. A retrouver sur ton bureau."},
   /* 5 */ {cat:"ANN", tier:"fete", fete:"Marie", sceau:"M", quoi:"Coloriage", nom:"Marie", acces:"lien", lien:"",
    titre:"L'anniversaire de Marie",
-   texte:["Aujourd'hui, ma sœur prend un an de plus. Un petit message de ta part lui fera plaisir.","En attendant, un coloriage fait maison. Crayons de couleur et chocolat chaud conseillés."]},
+   texte:["Aujourd'hui, ma sœur prend un an de plus.","En plus de ça, un coloriage."]},
   /* 6 */ {cat:"CAD", tier:"or", quoi:"Un livre", nom:"Livre", acces:"paquet",
    titre:"Un livre pour les soirées d'hiver",
-   texte:"Un livre de poche choisi pour toi. Il tient dans un sac ou sur une table de nuit, et il se lit très bien sous un plaid."},
+   texte:"Un livre de poche choisi pour toi. Il tient dans un sac ou sur une table de nuit, et il va se lire en 1 journée."},
   /* 7 */ {cat:"JEU", tier:"or", quoi:"Connections", nom:"Connections", acces:"lien", lien:"",
    titre:"Connections, version Jeanne",
-   texte:"Seize mots, quatre groupes cachés. Les liens sont plus personnels que d'habitude : certains ne parleront qu'à toi."},
+   texte:"Seize mots, quatre groupes cachés. Les liens sont plus personnels que d'habitude."},
   /* 8 */ {cat:"CAD", tier:"givre", quoi:"Chocolat", nom:"Chocolat", acces:"paquet",
    titre:"Une pause chocolat",
    texte:"Celui-ci ne se partage pas. Enfin, si tu veux, mais rien ne t'y oblige."},
@@ -447,14 +447,14 @@ const JOURS = [
    titre:"Deuxième pliage",
    texte:"Un autre origami. J'ai fait des progrès depuis le 4, tu jugeras."},
   /* 11 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"",
-   titre:"Mots croisés, spécial famille",
-   texte:"Une grille sur ma famille : les prénoms, les manies et les histoires qu'on se raconte à chaque repas. Bonne chance."},
+   titre:"Mots croisés, spécial D'INCA",
+   texte:"Une grille faite par ta famille : les prénoms, les manies et les histoires qu'on se raconte à chaque repas. Bonne chance."},
   /* 12 */ {cat:"CAD", tier:"or", quoi:"Un livre", nom:"Livre", acces:"paquet",
    titre:"Un deuxième livre",
    texte:"Parce qu'un seul ne suffit pas pour tenir jusqu'à Noël."},
   /* 13 */ {cat:"MUS", tier:"or", quoi:"Playlist", nom:"Playlist", acces:"lien", lien:"",
    titre:"Une playlist pour toi",
-   texte:"Des morceaux choisis un par un. À écouter dans l'ordre, de préférence avec un casque et une boisson chaude."},
+   texte:"Des morceaux choisis un par un."},
   /* 14 */ {cat:"CAD", tier:"givre", quoi:"Du vin", nom:"Vin", acces:"paquet",
    titre:"Un vin pour une soirée tranquille",
    texte:"À ouvrir quand tu en as envie, idéalement pas toute seule."},
@@ -489,10 +489,10 @@ const JOURS = [
    titre:"Joyeux Noël, Jeanne",
    texte:[
      "Vingt-quatre matins : des grilles, des puzzles, du chocolat et quelques livres. J'espère que chaque case t'a arraché au moins un sourire.",
-     "Je voulais que ce mois de décembre te ressemble un peu : doux, gourmand, avec des fous rires et quelques surprises.",
-     "Merci d'avoir relu mon mémoire virgule par virgule, et merci pour tout le reste, qu'on ne dit pas assez.",
-     "Ton cadeau t'attend sous le sapin. Mais celui-ci, je voulais qu'il dure tout le mois.",
-     "P.-S. : une des boules de Noël, tout en haut, cache encore quelque chose."
+     "Je voulais que ce mois de décembre te ressemble un peu",
+     "Merci pour tout.",
+     "Ton cadeau t'attendra une fois ton retour de Grenoble.",
+     "PS. : une des boules de Noël, tout en haut, cache encore quelque chose."
    ]},
 ];
 

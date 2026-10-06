@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Mots croisés personnalisés</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Concept : une grille de papier ivoire posée sur le velours vert du calendrier ; la définition active flotte au-dessus. */
+:root{
+  --night:#0b1512; --pine:#12241f; --pine-hi:#1a332c;
+  --line:rgba(201,169,104,.32); --gold:#c9a968; --gold-hi:#ecd9a6;
+  --ink:#efe9dc; --muted:#8ea198; --paper:#f2ece0; --paper-ink:#1c2a24; --berry:#7d2430;
+  --word:#ecdcae; --cell-on:#e2bf6a; --bad:#b4404d; --good:#2f6b52;
+  --f-display:"Bodoni Moda","Didot","Times New Roman",serif;
+  --f-body:"Jost","Futura",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:radial-gradient(110% 60% at 50% -5%,var(--pine-hi) 0%,var(--night) 62%) fixed,var(--night);color:var(--ink);
+  font-family:var(--f-body);font-weight:300;font-size:15px;line-height:1.5;padding-inline:16px;padding-block:0 48px}
+#glow{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(28vmax 28vmax at 6% 80%,rgba(125,36,48,.30),transparent 70%),radial-gradient(24vmax 24vmax at 94% 22%,rgba(125,36,48,.22),transparent 70%),radial-gradient(30vmax 22vmax at 70% 98%,rgba(201,169,104,.12),transparent 70%)}
+#snow,#confetti{position:fixed;inset:0;pointer-events:none}
+#snow{z-index:0} #confetti{z-index:20}
+.wrap{position:relative;z-index:1;max-width:980px;margin:0 auto}
+header{padding-block:18px 10px;display:grid;gap:6px;text-align:center;justify-items:center}
+.eyebrow{font-weight:400;letter-spacing:.32em;text-transform:uppercase;font-size:11px;color:var(--gold)}
+h1{margin:0;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:clamp(26px,6vw,40px);line-height:1.05;text-wrap:balance}
+h1 em{font-style:normal;font-weight:500;color:var(--gold-hi)}
+.progress{font-size:13.5px;color:var(--muted)} .progress b{color:var(--ink);font-weight:500}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,330px);gap:22px;align-items:start}
+@media (max-width:820px){.layout{grid-template-columns:minmax(0,1fr)}}
+.play{min-width:0;display:grid;gap:10px;justify-items:center}
+
+.clue-bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;width:100%;max-width:620px;display:flex;align-items:center;gap:8px;
+  background:var(--paper);color:var(--paper-ink);border-radius:3px;padding:8px 8px;box-shadow:0 10px 24px -14px #000}
+.clue-bar .num{flex:none;font-weight:600;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--berry);min-width:44px;text-align:center}
+.clue-bar .txt{flex:1;min-width:0;font-family:var(--f-display);font-style:italic;font-size:16.5px;line-height:1.25}
+.clue-bar button{flex:none;width:34px;height:34px;border:0;border-radius:2px;background:transparent;color:var(--paper-ink);font-size:20px;cursor:pointer}
+.clue-bar button:focus-visible{outline:2px solid var(--berry)}
+
+.gridwrap{width:100%;overflow-x:auto;display:flex;justify-content:center;padding-block:4px}
+.grid{display:grid;gap:2px;width:min(620px,100%);touch-action:manipulation}
+.grid .b{aspect-ratio:1}
+.cell{position:relative;aspect-ratio:1;background:var(--paper);border-radius:2px;min-width:0}
+.cell input{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;text-align:center;padding:0;padding-top:8%;
+  font-family:var(--f-body);font-weight:600;font-size:clamp(11px,3.3vw,19px);color:var(--paper-ink);text-transform:uppercase;caret-color:transparent;outline:none;border-radius:2px;cursor:pointer}
+.cell .n{position:absolute;top:1px;left:2px;font-size:clamp(6px,1.6vw,9px);line-height:1;font-weight:500;color:#5e6a63;pointer-events:none}
+.cell.inword{background:var(--word)}
+.cell.on{background:var(--cell-on)}
+.cell.bad input{color:var(--bad)}
+.cell.revealed input{color:var(--good)}
+.cell.solved{background:#e6efe6}
+.cell.inword.solved{background:var(--word)} .cell.on.solved{background:var(--cell-on)}
+
+.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.btn{font-family:var(--f-body);font-weight:400;font-size:12px;letter-spacing:.22em;text-transform:uppercase;border-radius:2px;padding:10px 14px;cursor:pointer;background:transparent;color:var(--ink);border:1px solid rgba(239,233,220,.3)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn:focus-visible{outline:1px solid #fff;outline-offset:3px}
+
+.clues{display:grid;gap:18px;min-width:0}
+@media (max-width:820px){.clues{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}}
+.clues h2{margin:0 0 6px;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:22px;color:var(--gold-hi)}
+.clues ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.clues li{display:flex;gap:10px;padding:6px 8px;border-radius:2px;cursor:pointer;font-size:14.5px;line-height:1.35}
+.clues li b{flex:none;width:22px;text-align:right;font-weight:500;color:var(--gold)}
+.clues li:hover{background:rgba(239,233,220,.05)}
+.clues li.on{background:rgba(236,217,166,.14)}
+.clues li.done span{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(142,161,152,.5)}
+.end{margin-top:6px;text-align:center;display:grid;gap:8px;justify-items:center}
+.end h2{margin:0;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:30px;color:var(--gold-hi)}
+.end p{margin:0;color:#cfc8b8;max-width:38ch}
+.end a{color:var(--gold-hi);font-size:12px;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--gold);padding-bottom:2px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);opacity:0;transition:.25s;z-index:30;
+  background:var(--paper);color:var(--paper-ink);padding:9px 16px;border-radius:2px;font-weight:500;font-size:14px;pointer-events:none;max-width:calc(100% - 32px)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.error{border:1px dashed var(--line);padding:18px;border-radius:3px;color:#e3c0c0;text-align:center}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+
+</head>
+<body>
+<div id="glow" aria-hidden="true"></div>
+<canvas id="snow" aria-hidden="true"></canvas>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow">Mots croisés personnalisés</div>
+    <h1 id="title">Rien que <em>pour toi</em></h1>
+    <div class="progress" id="progress"></div>
+  </header>
+  <div class="layout">
+    <div class="play">
+      <div class="clue-bar" id="clueBar">
+        <button type="button" id="prevClue" aria-label="Définition précédente">‹</button>
+        <span class="num" id="clueNum"></span><span class="txt" id="clueTxt"></span>
+        <button type="button" id="nextClue" aria-label="Définition suivante">›</button>
+      </div>
+      <div class="gridwrap"><div class="grid" id="grid" role="grid" aria-label="Grille de mots croisés"></div></div>
+      <div class="actions" id="actions">
+        <button class="btn" id="checkBtn" type="button">Vérifier</button>
+        <button class="btn" id="hintBtn" type="button">Révéler la lettre</button>
+      </div>
+      <div class="end" id="end" hidden></div>
+    </div>
+    <div class="clues">
+      <section><h2>Horizontalement</h2><ol id="across"></ol></section>
+      <section><h2>Verticalement</h2><ol id="down"></ol></section>
+    </div>
+  </div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =====================================================
+   À PERSONNALISER
+   Une grille par entrée ; l'adresse choisit la grille : mots.html#jeanne
+   • mot : la réponse (accents, espaces et tirets sont ignorés)
+   • def : la définition affichée
+   • graine : change ce nombre pour obtenir une autre disposition
+   ===================================================== */
+const RETOUR = "index.html";
+const GRILLES = {
+  jeanne: {
+    titre: "Rien que <em>pour toi</em>",
+    graine: 6,
+    indices: 6,
+    fin: "Grille complète. Tu connais ta vie par cœur, c'est rassurant.",
+    mots: [
+      {mot:"Efira",            def:"Actrice fortement appréciée"},
+      {mot:"Grenoble",         def:"Ville au pied des Alpes, où le Palais des sports n'a plus de secret pour toi"},
+      {mot:"Venise",           def:"Banksy a tagué ici"},
+      {mot:"Le Havre",         def:"49° 29′ 24″ nord, 0° 06′ 00″ est"},
+      {mot:"Parapente",        def:"Cannelés, sandwich et une mamie déterminée"},
+      {mot:"Saint Maur",       def:"On y est au 210"},
+      {mot:"Les Acolytes",     def:"Un TT ou un café à portée de main"},
+      {mot:"Talons",           def:"Toujours présents, de tailles différentes"},
+      {mot:"Vernie",           def:"#87102C étalé quelque part"},
+      {mot:"Casque",           def:"Indispensable pour la musique comme pour la moto"},
+      {mot:"Boucle",           def:"Se porte à l'oreille ou dans les cheveux"},
+      {mot:"Yoa",              def:"Chanteuse notée 9,75 à l'Olympia"},
+      {mot:"Musilac",          def:"Mot mentionné quasi quotidiennement"},
+      {mot:"Lentilles",        def:"Dans les yeux ou dans l'assiette"},
+      {mot:"Gomasio",          def:"Sur la salade de salade"},
+      {mot:"Piano",            def:"Noir et blanc"},
+      {mot:"Ground control",   def:"Premier lieu de rencontre"},
+      {mot:"Book club",        def:"On y parle d'un sujet commun et on fait un update des potins"},
+      {mot:"Spritz",           def:"Né en Vénétie"},
+      {mot:"Matcha",           def:"Thé vert"},
+      {mot:"Sex and the city", def:"94 épisodes"},
+      {mot:"Casablanca",       def:"Ville ou homme du moment"},
+    ],
+  },
+};
+/* ===================================================== */
+
+/* Générateur de mots croisés : place les mots en se croisant, sans contacts parasites. */
+function makeCrossword(words, seed, tries=400){
+  let a = seed >>> 0;
+  const R = () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a>>>15, 1|a); t = t + Math.imul(t ^ t>>>7, 61|t) ^ t; return ((t ^ t>>>14)>>>0)/4294967296; };
+  let best = null;
+  for (let attempt=0; attempt<tries; attempt++){
+    const grid = new Map(), placed = [];
+    const key = (x,y) => x+","+y, at = (x,y) => grid.get(key(x,y));
+    const order = words.map((w,i) => i).sort((i,j) => words[j].length - words[i].length + (R()-.5)*3);
+    const canPlace = (w, x, y, dir) => {
+      const dx = dir ? 0 : 1, dy = dir ? 1 : 0; let cross = 0;
+      if (at(x-dx, y-dy) || at(x+dx*w.length, y+dy*w.length)) return -1;
+      for (let k=0;k<w.length;k++){
+        const cx = x+dx*k, cy = y+dy*k, c = at(cx,cy);
+        if (c){ if (c.ch !== w[k] || c.dirs.has(dir)) return -1; cross++; }
+        else if (at(cx+dy, cy+dx) || at(cx-dy, cy-dx)) return -1;
+      }
+      return cross;
+    };
+    const put = (i, x, y, dir) => {
+      const w = words[i], dx = dir ? 0 : 1, dy = dir ? 1 : 0;
+      for (let k=0;k<w.length;k++){ const kk = key(x+dx*k, y+dy*k); const c = grid.get(kk) || {ch:w[k], dirs:new Set()}; c.dirs.add(dir); grid.set(kk, c); }
+      placed.push({i, x, y, dir});
+    };
+    put(order[0], 0, 0, R() < .5 ? 0 : 1);
+    const pending = order.slice(1);
+    let progress = true;
+    while (pending.length && progress){
+      progress = false;
+      for (let p=0; p<pending.length; p++){
+        const i = pending[p], w = words[i]; let cands = [];
+        for (const [kk, c] of grid){
+          const [gx, gy] = kk.split(",").map(Number);
+          for (let k=0;k<w.length;k++){
+            if (w[k] !== c.ch) continue;
+            for (const dir of [0,1]){
+              if (c.dirs.has(dir)) continue;
+              const x = dir ? gx : gx-k, y = dir ? gy-k : gy;
+              const cr = canPlace(w, x, y, dir);
+              if (cr > 0) cands.push({x, y, dir, cr});
+            }
+          }
+        }
+        if (!cands.length) continue;
+        // bornes actuelles pour favoriser une grille compacte et carrée
+        let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+        for (const kk of grid.keys()){ const [gx,gy] = kk.split(",").map(Number); minX=Math.min(minX,gx); maxX=Math.max(maxX,gx); minY=Math.min(minY,gy); maxY=Math.max(maxY,gy); }
+        const score = c => {
+          const dx = c.dir ? 0 : 1, dy = c.dir ? 1 : 0, ex = c.x+dx*(w.length-1), ey = c.y+dy*(w.length-1);
+          const W = Math.max(maxX,ex)-Math.min(minX,c.x)+1, H = Math.max(maxY,ey)-Math.min(minY,c.y)+1;
+          return c.cr*6 - Math.max(W,H)*1.5 - Math.abs(W-H)*.5 + R()*2;
+        };
+        cands.sort((u,v) => score(v) - score(u));
+        const c = cands[0]; put(i, c.x, c.y, c.dir); pending.splice(p,1); p--; progress = true;
+      }
+    }
+    let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+    for (const kk of grid.keys()){ const [gx,gy] = kk.split(",").map(Number); minX=Math.min(minX,gx); maxX=Math.max(maxX,gx); minY=Math.min(minY,gy); maxY=Math.max(maxY,gy); }
+    const W = maxX-minX+1, H = maxY-minY+1;
+    const q = placed.length*100 - Math.max(W,H)*3 - W*H*.05;
+    if (!best || q > best.q) best = {q, W, H, missing: pending.slice(), placed: placed.map(p => ({...p, x:p.x-minX, y:p.y-minY}))};
+  }
+  return best;
+}
+
+
+const KEY = (location.hash || "").replace("#","") || Object.keys(GRILLES)[0];
+addEventListener("hashchange", () => location.reload());
+const G = GRILLES[KEY];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm = w => w.normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase().replace(/Œ/g,"OE").replace(/Æ/g,"AE").replace(/[^A-Z]/g,"");
+const STORE = "mots-" + KEY;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+let W, H, answers, entries = [], cells = new Map(), fill = {}, revealed = new Set(), hintsLeft, cur = null, dir = 0;
+
+function toast(t){ const el = $("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 1800); }
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify({f:fill, r:[...revealed], h:hintsLeft})); }catch(e){} }
+function load(){ try{ const s = JSON.parse(localStorage.getItem(STORE) || "null"); if (s){ fill = s.f || {}; revealed = new Set(s.r || []); hintsLeft = s.h ?? hintsLeft; } }catch(e){} }
+const k = (x,y) => x+","+y;
+
+function build(){
+  answers = G.mots.map(m => norm(m.mot));
+  const lay = makeCrossword(answers, G.graine || 1, 150);
+  if (lay.missing.length){ $("grid").outerHTML = `<div class="error">Impossible de placer : ${lay.missing.map(i => esc(G.mots[i].mot)).join(", ")}. Change la graine.</div>`; return false; }
+  W = lay.W; H = lay.H;
+  // cases et numérotation
+  lay.placed.forEach(p => { const w = answers[p.i]; for (let j=0;j<w.length;j++){ const x = p.x + (p.dir?0:j), y = p.y + (p.dir?j:0); cells.set(k(x,y), {x, y, ch:w[j], words:[]}); } });
+  let n = 0; const starts = new Map();
+  for (let y=0;y<H;y++) for (let x=0;x<W;x++){
+    const here = lay.placed.filter(p => p.x === x && p.y === y);
+    if (here.length){ n++; starts.set(k(x,y), n); here.forEach(p => entries.push({...p, n, word:answers[p.i], def:G.mots[p.i].def, lens:G.mots[p.i].mot.split(/[\s'’-]+/).map(norm).filter(Boolean).map(t => t.length).join(", ")})); }
+  }
+  entries.sort((a,b) => a.dir - b.dir || a.n - b.n);
+  entries.forEach((e,ei) => { e.cells = []; for (let j=0;j<e.word.length;j++){ const c = k(e.x + (e.dir?0:j), e.y + (e.dir?j:0)); e.cells.push(c); cells.get(c).words[e.dir] = ei; } });
+  // grille
+  const grid = $("grid");
+  grid.style.gridTemplateColumns = `repeat(${W}, minmax(0,1fr))`;
+  grid.style.width = `min(${Math.max(W*34, 300)}px, 100%)`;
+  let html = "";
+  for (let y=0;y<H;y++) for (let x=0;x<W;x++){
+    const c = cells.get(k(x,y));
+    html += c ? `<div class="cell" data-k="${k(x,y)}">${starts.has(k(x,y)) ? `<span class="n">${starts.get(k(x,y))}</span>` : ""}<input aria-label="Case" maxlength="2" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text"></div>` : `<div class="b"></div>`;
+  }
+  grid.innerHTML = html;
+  // définitions
+  const li = (e,ei) => `<li data-e="${ei}"><b>${e.n}</b><span>${esc(e.def)} <span style="opacity:.55">(${e.lens})</span></span></li>`;
+  $("across").innerHTML = entries.map((e,ei) => e.dir === 0 ? li(e,ei) : "").join("");
+  $("down").innerHTML = entries.map((e,ei) => e.dir === 1 ? li(e,ei) : "").join("");
+  return true;
+}
+
+const inputAt = key => document.querySelector(`.cell[data-k="${key}"] input`);
+function render(){
+  document.querySelectorAll(".cell").forEach(el => {
+    const key = el.dataset.k, c = cells.get(key), inp = el.querySelector("input");
+    if (inp.value !== (fill[key] || "")) inp.value = fill[key] || "";
+    const ei = cur ? cells.get(cur).words[dir] : undefined;
+    el.classList.toggle("on", key === cur);
+    el.classList.toggle("inword", ei !== undefined && entries[ei].cells.includes(key) && key !== cur);
+    el.classList.toggle("revealed", revealed.has(key));
+  });
+  let done = 0;
+  document.querySelectorAll(".clues li").forEach(li => {
+    const e = entries[+li.dataset.e], ok = e.cells.every(c => fill[c] === cells.get(c).ch);
+    li.classList.toggle("done", ok); if (ok) done++;
+    li.classList.toggle("on", cur && cells.get(cur).words[dir] === +li.dataset.e);
+  });
+  $("progress").innerHTML = `<b>${done}</b> mot${done>1?"s":""} sur ${entries.length}`;
+  const ei = cur ? cells.get(cur).words[dir] : 0, e = entries[ei ?? 0];
+  $("clueNum").textContent = `${e.n} ${e.dir ? "vert." : "horiz."}`;
+  $("clueTxt").textContent = e.def;
+  $("hintBtn").textContent = `Révéler la lettre (${hintsLeft})`;
+  $("hintBtn").disabled = hintsLeft <= 0 || !cur;
+  if (done === entries.length) finish();
+}
+
+function select(key, d){
+  const c = cells.get(key); if (!c) return;
+  if (d === undefined) d = dir;
+  if (c.words[d] === undefined) d = 1 - d;
+  cur = key; dir = d; render();
+  const inp = inputAt(key); if (inp && document.activeElement !== inp) inp.focus({preventScroll:true});
+}
+function step(delta){
+  const ei = cells.get(cur).words[dir], list = entries[ei].cells, i = list.indexOf(cur) + delta;
+  if (i >= 0 && i < list.length) select(list[i], dir);
+}
+function focusEntry(ei){
+  const e = entries[ei], first = e.cells.find(c => !fill[c]) || e.cells[0];
+  select(first, e.dir);
+}
+
+$("grid").addEventListener("pointerdown", e => {
+  const el = e.target.closest(".cell"); if (!el) return;
+  const key = el.dataset.k;
+  if (key === cur){ const c = cells.get(key); if (c.words[1-dir] !== undefined){ dir = 1 - dir; render(); } }
+  else select(key);
+});
+$("grid").addEventListener("focusin", e => { const el = e.target.closest(".cell"); if (el && el.dataset.k !== cur) select(el.dataset.k); });
+$("grid").addEventListener("input", e => {
+  const el = e.target.closest(".cell"); if (!el) return;
+  const key = el.dataset.k, v = norm(e.target.value).slice(-1);
+  e.target.value = v;
+  if (revealed.has(key)) { e.target.value = fill[key]; return; }
+  el.classList.remove("bad");
+  if (v){ fill[key] = v; save(); step(1); } else { delete fill[key]; save(); render(); }
+});
+$("grid").addEventListener("keydown", e => {
+  if (!cur) return;
+  const c = cells.get(cur), mv = {ArrowRight:[1,0,0], ArrowLeft:[-1,0,0], ArrowDown:[0,1,1], ArrowUp:[0,-1,1]}[e.key];
+  if (mv){ e.preventDefault();
+    if ((mv[2]) !== dir && c.words[mv[2]] !== undefined){ dir = mv[2]; render(); return; }
+    let x = c.x + mv[0], y = c.y + mv[1];
+    while (x>=0 && y>=0 && x<W && y<H){ if (cells.has(k(x,y))){ select(k(x,y), mv[2]); break; } x += mv[0]; y += mv[1]; }
+    return; }
+  if (e.key === "Backspace" && !fill[cur]){ e.preventDefault(); step(-1); if (!revealed.has(cur)){ delete fill[cur]; save(); render(); } }
+  if (e.key === "Enter" || e.key === "Tab"){ e.preventDefault(); const ei = c.words[dir]; focusEntry((ei + (e.shiftKey ? -1 : 1) + entries.length) % entries.length); }
+});
+document.querySelector(".clues").addEventListener("click", e => { const li = e.target.closest("li"); if (li) focusEntry(+li.dataset.e); });
+$("prevClue").addEventListener("click", () => { const ei = cur ? cells.get(cur).words[dir] : 0; focusEntry((ei - 1 + entries.length) % entries.length); });
+$("nextClue").addEventListener("click", () => { const ei = cur ? cells.get(cur).words[dir] : -1; focusEntry((ei + 1) % entries.length); });
+
+$("checkBtn").addEventListener("click", () => {
+  let bad = 0;
+  document.querySelectorAll(".cell").forEach(el => { const key = el.dataset.k, wrong = fill[key] && fill[key] !== cells.get(key).ch; el.classList.toggle("bad", !!wrong); if (wrong) bad++; });
+  toast(bad ? `${bad} lettre${bad>1?"s":""} à revoir, en rouge` : "Aucune erreur pour l'instant");
+});
+$("hintBtn").addEventListener("click", () => {
+  if (!cur || hintsLeft <= 0) return;
+  const target = fill[cur] === cells.get(cur).ch ? entries[cells.get(cur).words[dir]].cells.find(c => fill[c] !== cells.get(c).ch) : cur;
+  if (!target){ toast("Ce mot est déjà juste"); return; }
+  fill[target] = cells.get(target).ch; revealed.add(target); hintsLeft--; save();
+  const el = document.querySelector(`.cell[data-k="${target}"]`); el && el.classList.remove("bad");
+  render();
+});
+
+function finish(){
+  if (!$("end").hidden) return;
+  $("actions").hidden = true; $("end").hidden = false;
+  $("end").innerHTML = `<h2>Bravo</h2><p>${esc(G.fin || "Grille complète.")}</p>
+    <p style="font-size:13px;color:var(--muted)">${revealed.size ? `${revealed.size} lettre${revealed.size>1?"s":""} révélée${revealed.size>1?"s":""}.` : "Sans aucune aide."}</p>
+    ${RETOUR ? `<a href="${esc(RETOUR)}">Revenir au calendrier</a>` : ""}`;
+  if (!finish.loading) confetti();
+}
+
+/* ---- confettis ---- */
+function confetti(){
+  if (reduce) return;
+  const c = $("confetti"), x = c.getContext("2d"), d = Math.min(2, devicePixelRatio||1), w = innerWidth, h = innerHeight;
+  c.width = w*d; c.height = h*d; c.style.width = w+"px"; c.style.height = h+"px"; x.setTransform(d,0,0,d,0,0);
+  const cols = ["#e9c96f","#ecd9a6","#a9c8d9","#d9a7b8","#f2ece0","#a3424e","#a9c79f"]; let parts = [];
+  const piece = (px,py,a,sp) => ({x:px,y:py,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,g:.16+Math.random()*.08,w:5+Math.random()*6,h:8+Math.random()*8,r:Math.random()*6,vr:(Math.random()-.5)*.35,t:Math.random()*6,c:cols[(Math.random()*cols.length)|0],life:0});
+  for (let i=0;i<200;i++){ const s = i%2 ? 1 : -1; parts.push(piece(s>0?-10:w+10, h*.75, s>0 ? -Math.PI/3-Math.random()*.5 : -2*Math.PI/3+Math.random()*.5, 9+Math.random()*10)); }
+  for (let i=0;i<120;i++) parts.push(piece(Math.random()*w, -20-Math.random()*h*.5, Math.PI/2, 1+Math.random()*2));
+  (function tick(){ x.clearRect(0,0,w,h); parts = parts.filter(p => p.y < h+30 && p.life < 600);
+    for (const p of parts){ p.life++; p.vx *= .99; p.vy = p.vy*.99 + p.g; p.x += p.vx + Math.sin(p.t += .08)*.6; p.y += p.vy; p.r += p.vr;
+      x.save(); x.translate(p.x,p.y); x.rotate(p.r); x.scale(1,Math.cos(p.t)); x.fillStyle = p.c; x.fillRect(-p.w/2,-p.h/2,p.w,p.h); x.restore(); }
+    if (parts.length) requestAnimationFrame(tick); })();
+}
+
+/* ---- neige légère ---- */
+(function(){
+  if (reduce) return;
+  const c = $("snow"), x = c.getContext("2d"); let w, h, f = [];
+  function size(){ const d = Math.min(2, devicePixelRatio||1); w = innerWidth; h = innerHeight; c.width = w*d; c.height = h*d; c.style.width = w+"px"; c.style.height = h+"px"; x.setTransform(d,0,0,d,0,0);
+    f = Array.from({length:Math.min(90, Math.round(w/10))}, () => { const z = Math.random(); return {x:Math.random()*w, y:Math.random()*h, z, r:.5+z*2, s:.2+z*.6, o:Math.random()*6.3, a:.15+z*.45}; }); }
+  size(); addEventListener("resize", size);
+  (function tick(){ x.clearRect(0,0,w,h); x.fillStyle = "#f3f1ea";
+    for (const p of f){ p.y += p.s; p.o += .007; p.x += Math.sin(p.o)*(.2+p.z*.3); if (p.y > h+5){ p.y = -5; p.x = Math.random()*w; } x.globalAlpha = p.a; x.beginPath(); x.arc(p.x,p.y,p.r,0,7); x.fill(); }
+    x.globalAlpha = 1; requestAnimationFrame(tick); })();
+})();
+
+function init(){
+  if (!G){ $("grid").outerHTML = `<div class="error">Cette grille n'existe pas encore.</div>`; $("actions").hidden = true; return; }
+  $("title").innerHTML = G.titre || "Mots croisés";
+  hintsLeft = G.indices ?? 6;
+  if (!build()) { $("actions").hidden = true; return; }
+  load();
+  finish.loading = true; cur = entries[0].cells[0]; dir = entries[0].dir; render(); finish.loading = false;
+}
+init();
+</script>
+
+</body>
+</html>

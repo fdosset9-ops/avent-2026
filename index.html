@@ -2722,13 +2722,13 @@ const CONFIG = {
 const JOURS = [
   /* 1 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"mots.html#jeanne",
    titre:"Mots croisés, spécial Jeanne",
-   texte:"Pour commencer, une grille entièrement consacrée à toi.Vingt-deux mots, et une seule personne capable de tous les trouver."},
+   texte:"Pour commencer, une grille entièrement consacrée à toi : tes villes, tes concerts, tes petites manies. Vingt-deux mots, et une seule personne capable de tous les trouver."},
   /* 2 */ {cat:"CAD", tier:"givre", quoi:"Vernis", nom:"Vernis", acces:"paquet",
    titre:"Une couleur pour décembre",
-   texte:"Un petit flacon pour des ongles de fête."},
-  /* 3 */ {cat:"JEU", tier:"or", quoi:"Puzzle", nom:"Puzzle", acces:"lien", lien:"",
-   titre:"Un puzzle à reconstituer",
-   texte:"Une photo qui compte, découpée en morceaux. À toi de remettre les pièces en place."},
+   texte:"Un petit flacon pour des ongles de fête. Je n'ai demandé conseil à personne et j'assume entièrement mon choix."},
+  /* 3 */ {cat:"CAD", tier:"or", quoi:"Marque-page", nom:"Marque-page", acces:"paquet",
+   titre:"Pour garder ta page",
+   texte:"Un marque-page fait main, rien que pour toi. Il attend sagement le premier livre de poche, qui arrive dans trois jours."},
   /* 4 */ {cat:"CAD", tier:"or", quoi:"Origami", nom:"Origami", acces:"paquet",
    titre:"Plié pour toi",
    texte:"Un origami fait main, avec beaucoup de patience et un nombre de ratés que je préfère garder secret."},
@@ -2737,10 +2737,10 @@ const JOURS = [
    texte:["Aujourd'hui, ma sœur prend un an de plus. Un petit message de ta part lui fera plaisir.","En attendant, un coloriage fait maison. Crayons de couleur et chocolat chaud conseillés."]},
   /* 6 */ {cat:"CAD", tier:"or", quoi:"Un livre", nom:"Livre", acces:"paquet",
    titre:"Un livre pour les soirées d'hiver",
-   texte:"Un livre de poche choisi pour toi. Il va être lu en une journée."},
+   texte:"Un livre de poche choisi pour toi. Il tient dans un sac ou sur une table de nuit, et il se lit très bien sous un plaid."},
   /* 7 */ {cat:"JEU", tier:"or", quoi:"Les liens", nom:"Les liens", acces:"lien", lien:"liens.html#j7",
-   titre:"Connections, version Jeanne",
-   texte:"Tu connais le jeu, cette fois il est personnalisé."},
+   titre:"Les liens, version Jeanne",
+   texte:"Seize mots, quatre groupes cachés. Les liens sont plus personnels que d'habitude : certains ne parleront qu'à toi."},
   /* 8 */ {cat:"CAD", tier:"givre", quoi:"Chocolat", nom:"Chocolat", acces:"paquet",
    titre:"Une pause chocolat",
    texte:"Celui-ci ne se partage pas. Enfin, si tu veux, mais rien ne t'y oblige."},
@@ -2768,15 +2768,16 @@ const JOURS = [
   /* 16 */ {cat:"JEU", tier:"or", quoi:"Coloriage", nom:"Coloriage", acces:"lien", lien:"",
    titre:"Un deuxième coloriage",
    texte:"Un nouveau dessin à remplir de couleurs, toujours fait maison."},
-  /* 17 */ {cat:"CAD", tier:"or", quoi:"Chocolat", nom:"Chocolat", acces:"paquet",
-   titre:"Encore du chocolat",
-   texte:"Personne n'a jamais regretté d'avoir du chocolat en réserve en décembre."},
+  /* 17 */ {cat:"CIN", tier:"or", quoi:"Sex and the City", nom:"SATC", acces:"",
+   titre:"Soirée Sex and the City",
+   texte:["Bon pour une soirée devant le film, plaid compris. Et pour faire les choses bien, le cocktail de Carrie :",
+          "Cosmopolitan : 4 cl de vodka citron, 1,5 cl de triple sec, 1,5 cl de jus de citron vert, 3 cl de jus de cranberry. Au shaker avec beaucoup de glace, servi dans un verre à cocktail, avec un zeste d'orange."]},
   /* 18 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"",
    titre:"Mots croisés, spécial copains",
    texte:"Cette fois, la grille parle de nos amis. Certaines définitions pourraient provoquer des fous rires, d'autres des disputes."},
-  /* 19 */ {cat:"ANN", tier:"fete", fete:"Marie-Françoise", sceau:"MF", quoi:"Puzzle", nom:"Marie-Françoise", acces:"lien", lien:"",
+  /* 19 */ {cat:"ANN", tier:"fete", fete:"Marie-Françoise", sceau:"MF", quoi:"Wordle", nom:"Marie-Françoise", acces:"lien", lien:"wordle.html#jeanne",
    titre:"L'anniversaire de Marie-Françoise",
-   texte:["Aujourd'hui, c'est l'anniversaire de ma mère. Un appel ou un message de ta part la touchera beaucoup.","Pour toi, un dernier puzzle à reconstituer."]},
+   texte:["Aujourd'hui, c'est l'anniversaire de ma mère. Un appel ou un message de ta part la touchera beaucoup.","Pour toi, une série de cinq mots à deviner. Six essais par mot, et pas toujours d'indice."]},
   /* 20 */ {cat:"CAD", tier:"givre", quoi:"Un livre", nom:"Livre", acces:"paquet",
    titre:"Le dernier livre",
    texte:"Le troisième et dernier du mois, gardé pour la fin. Tu me diras lequel tu as préféré."},
@@ -2801,7 +2802,7 @@ const JOURS = [
 ];
 
 /* ===================================================== */
-const CATS = {JEU:"À faire", CAD:"Petit cadeau", MUS:"Musique", MOT:"Petit mot", ANN:"Anniversaire"};
+const CATS = {JEU:"À faire", CAD:"Petit cadeau", MUS:"Musique", MOT:"Petit mot", ANN:"Anniversaire", CIN:"Cinéma"};
 const GIFT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="1"/><path d="M3 7h18v3H3zM12 7v14"/><path d="M12 7c-2-4-6-4-6-1.5S10 7 12 7zM12 7c2-4 6-4 6-1.5S14 7 12 7z"/></svg>';
 function encart(d){
   const j = JOURS[d-1];
@@ -2826,10 +2827,11 @@ const QR_ICONS = {
   puzzle:'<path d="M4 8h4a2 2 0 1 1 4 0h4v4a2 2 0 1 1 0 4v4H4v-4a2 2 0 1 0 0-4z"/>',
   lien:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
   crayon:'<path d="M4 20l1-4L16 5l3 3L8 19z"/><path d="M14 7l3 3"/>',
+  lettres:'<rect x="2.5" y="8" width="5.5" height="8" rx="1"/><rect x="9.25" y="8" width="5.5" height="8" rx="1" fill="currentColor"/><rect x="16" y="8" width="5.5" height="8" rx="1"/>',
   grille:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9.3h16M4 14.6h16M9.3 4v16M14.6 4v16"/><rect x="9.3" y="9.3" width="5.3" height="5.3" fill="currentColor"/>',
   etoile:'<path d="M12 2.5l2.6 6 6.4.6-4.9 4.2 1.5 6.3L12 16.3l-5.6 3.3 1.5-6.3L3 9.1l6.4-.6z"/>',
 };
-const QR_BY_QUOI = {"Mots croisés":"grille","Puzzle":"puzzle","Coloriage":"crayon","Les liens":"lien","Strands":"micro","Playlist":"note"};
+const QR_BY_QUOI = {"Mots croisés":"grille","Puzzle":"puzzle","Coloriage":"crayon","Les liens":"lien","Strands":"micro","Playlist":"note","Wordle":"lettres"};
 function themedQR(text, icon){
   const q = qrcode(0, "H"); q.addData(text); q.make();
   const n = q.getModuleCount(), m = 2, S = n + m*2;

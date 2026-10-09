@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Le mot de Jeanne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Jost:wght@300;400;500;600&display=swap">
+<style>
+/* Concept : des tuiles de papier ivoire qui se retournent sur le velours vert ; or = bien placée, givre = mal placée. Une série de mots de plus en plus longs. */
+:root{
+  --night:#0b1512; --pine:#12241f; --pine-hi:#1a332c;
+  --line:rgba(201,169,104,.32); --gold:#c9a968; --gold-hi:#ecd9a6;
+  --ink:#efe9dc; --muted:#8ea198; --paper:#f2ece0; --paper-ink:#1c2a24;
+  --ok:#e2bf6a; --ok-ink:#3a2a06; --near:#a9c8d9; --near-ink:#14303d; --no:#2a3f38; --no-ink:#9fb1a8;
+  --f-display:"Bodoni Moda","Didot","Times New Roman",serif;
+  --f-body:"Jost","Futura",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:radial-gradient(110% 60% at 50% -5%,var(--pine-hi) 0%,var(--night) 62%) fixed,var(--night);color:var(--ink);
+  font-family:var(--f-body);font-weight:300;font-size:15px;line-height:1.5;padding-inline:12px;padding-block:0;overflow-x:hidden}
+#glow{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(28vmax 28vmax at 6% 80%,rgba(125,36,48,.30),transparent 70%),radial-gradient(24vmax 24vmax at 94% 22%,rgba(125,36,48,.22),transparent 70%),radial-gradient(30vmax 22vmax at 70% 98%,rgba(201,169,104,.12),transparent 70%)}
+#snow,#confetti{position:fixed;inset:0;pointer-events:none}
+#snow{z-index:0} #confetti{z-index:20}
+.wrap{position:relative;z-index:1;max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:10px;padding-block:14px 12px}
+header{display:grid;gap:4px;text-align:center;justify-items:center}
+.eyebrow{font-weight:400;letter-spacing:.32em;text-transform:uppercase;font-size:11px;color:var(--gold)}
+h1{margin:0;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:clamp(26px,6.5vw,36px);line-height:1.05}
+h1 em{font-style:normal;font-weight:500;color:var(--gold-hi)}
+.steps{display:flex;gap:6px;justify-content:center;margin-top:4px}
+.steps i{width:28px;height:4px;border-radius:2px;background:rgba(239,233,220,.12)}
+.steps i.cur{background:transparent;box-shadow:inset 0 0 0 1px var(--gold)}
+.steps i.won{background:var(--gold)}
+.steps i.lost{background:#7d2430}
+.hint{min-height:22px;text-align:center;font-family:var(--f-display);font-style:italic;font-size:16px;color:#cfc8b8}
+
+.board{flex:1;display:grid;place-items:center;min-height:0}
+.rows{display:grid;gap:6px;width:100%}
+.row{display:grid;gap:6px;margin:0 auto}
+.row.shake{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+.tile{aspect-ratio:1;display:grid;place-items:center;border:1.5px solid rgba(239,233,220,.18);border-radius:3px;
+  font-weight:600;font-size:var(--tf,26px);text-transform:uppercase;color:var(--ink);background:rgba(18,36,31,.55)}
+.tile.filled{border-color:rgba(236,217,166,.6);animation:pop .12s ease-out}
+@keyframes pop{50%{transform:scale(1.08)}}
+.tile.ok{background:var(--ok);color:var(--ok-ink);border-color:var(--ok)}
+.tile.near{background:var(--near);color:var(--near-ink);border-color:var(--near)}
+.tile.no{background:var(--no);color:var(--no-ink);border-color:var(--no)}
+.tile.flip{animation:flip .5s ease both}
+@keyframes flip{0%{transform:rotateX(0)}49%{transform:rotateX(90deg)}51%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
+.tile.bounce{animation:bounce .5s ease both}
+@keyframes bounce{40%{transform:translateY(-14px)}70%{transform:translateY(3px)}}
+
+.kb{display:grid;gap:6px;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.kb .r{display:flex;gap:5px;justify-content:center}
+.kb button{flex:1;max-width:46px;height:54px;border:0;border-radius:4px;background:#d9d2c3;color:var(--paper-ink);font:600 16px var(--f-body);text-transform:uppercase;cursor:pointer;padding:0}
+.kb button.wide{max-width:72px;flex:1.6;font-size:11px;letter-spacing:.06em}
+.kb button.ok{background:var(--ok);color:var(--ok-ink)}
+.kb button.near{background:var(--near);color:var(--near-ink)}
+.kb button.no{background:#3a4f47;color:#8fa199}
+.kb button:focus-visible{outline:2px solid var(--gold-hi);outline-offset:1px}
+
+.panel{text-align:center;display:grid;gap:8px;justify-items:center;padding:10px 6px}
+.panel h2{margin:0;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:28px;color:var(--gold-hi)}
+.panel .emo{font-size:44px;line-height:1;animation:emo .6s cubic-bezier(.2,1.6,.4,1) both}
+@keyframes emo{from{transform:scale(.2) rotate(-20deg);opacity:0}}
+.panel .word{letter-spacing:.3em;font-weight:600;font-size:18px;color:var(--ok)}
+.panel p{margin:0;color:#cfc8b8;max-width:36ch}
+.btn{font-family:var(--f-body);font-weight:400;font-size:12px;letter-spacing:.24em;text-transform:uppercase;border-radius:2px;padding:12px 18px;cursor:pointer;background:var(--gold-hi);color:var(--night);border:1px solid var(--gold-hi)}
+.btn:focus-visible{outline:1px solid #fff;outline-offset:3px}
+.panel a{color:var(--gold-hi);font-size:12px;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--gold);padding-bottom:2px}
+#toast{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));transform:translate(-50%,-10px);opacity:0;transition:.25s;z-index:30;
+  background:var(--paper);color:var(--paper-ink);padding:9px 16px;border-radius:2px;font-weight:500;font-size:14px;pointer-events:none;max-width:calc(100% - 32px)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.help{font-size:12px;color:var(--muted);text-align:center;margin:0}
+.help b{font-weight:500;padding:0 5px;border-radius:2px}
+.help .o{background:var(--ok);color:var(--ok-ink)} .help .n{background:var(--near);color:var(--near-ink)}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+
+</head>
+<body>
+<div id="glow" aria-hidden="true"></div>
+<canvas id="snow" aria-hidden="true"></canvas>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Wordle personnalisé</div>
+    <h1 id="title">Le mot <em>de Jeanne</em></h1>
+    <div class="steps" id="steps" aria-label="Progression"></div>
+  </header>
+  <div class="hint" id="hint" aria-live="polite"></div>
+  <div class="board"><div class="rows" id="rows" role="grid" aria-label="Essais"></div></div>
+  <p class="help" id="help"><b class="o">or</b> bien placée · <b class="n">givre</b> présente ailleurs · six essais par mot</p>
+  <div class="kb" id="kb"></div>
+  <div class="panel" id="panel" hidden></div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =====================================================
+   À PERSONNALISER
+   Une série de mots à deviner l'un après l'autre.
+   • mot    : le mot secret (accents ignorés, 4 à 10 lettres)
+   • emoji  : affiché quand le mot est trouvé (facultatif)
+   • indice : affiché au-dessus de la grille (facultatif)
+   • apres  : petit mot affiché quand le mot est trouvé (facultatif)
+   L'adresse choisit la série : wordle.html#jeanne
+   ===================================================== */
+const RETOUR = "index.html";
+const ESSAIS = 6;
+const SERIES = {
+  jeanne: {
+    titre: "Le mot <em>de Jeanne</em>",
+    fin: "Cinq mots sans aucun rapport entre eux, et tu les as tous eus. Chapeau.",
+    mots: [
+      {mot:"Verts",      emoji:"💚"},
+      {mot:"Labello",    emoji:"💄"},
+      {mot:"Cadeau",     emoji:"🎁"},
+      {mot:"Mouette",    emoji:"🕊️"},
+      {mot:"Alexandrie", emoji:"🏛️"},
+    ],
+  },
+};
+/* ===================================================== */
+
+const KEY = (location.hash || "").replace("#","") || Object.keys(SERIES)[0];
+addEventListener("hashchange", () => location.reload());
+const S = SERIES[KEY];
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm = w => w.normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase().replace(/[^A-Z]/g,"");
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const STORE = "wordle4-" + KEY;
+
+let words, idx = 0, guesses = [], current = "", results = [], busy = false;
+
+function toast(t){ const el = $("toast"); el.textContent = t; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 1600); }
+function save(){ try{ localStorage.setItem(STORE, JSON.stringify({idx, guesses, results})); }catch(e){} }
+function load(){ try{ const s = JSON.parse(localStorage.getItem(STORE) || "null"); if (s){ idx = s.idx || 0; guesses = s.guesses || []; results = s.results || []; } }catch(e){} }
+
+function score(guess, answer){
+  const res = Array(guess.length).fill("no"), left = {};
+  for (let i=0;i<answer.length;i++) if (guess[i] === answer[i]) res[i] = "ok"; else left[answer[i]] = (left[answer[i]]||0) + 1;
+  for (let i=0;i<guess.length;i++) if (res[i] !== "ok" && left[guess[i]]){ res[i] = "near"; left[guess[i]]--; }
+  return res;
+}
+
+function layout(){
+  const n = words[Math.min(idx, words.length-1)].length;
+  const avail = Math.min(document.querySelector(".wrap").clientWidth, 520);
+  const boardH = document.querySelector(".board").clientHeight || 360;
+  const gap = n > 8 ? 4 : 6;
+  const byW = (avail - (n-1)*gap) / n, byH = (boardH - (ESSAIS-1)*6) / ESSAIS;
+  const t = Math.floor(Math.max(20, Math.min(62, byW, byH)));
+  document.querySelectorAll(".row").forEach(r => { r.style.gridTemplateColumns = `repeat(${n}, ${t}px)`; r.style.gap = gap + "px"; });
+  document.documentElement.style.setProperty("--tf", Math.round(t*.48) + "px");
+}
+
+function render(){
+  $("steps").innerHTML = words.map((_,i) => `<i class="${results[i] === "won" ? "won" : results[i] === "lost" ? "lost" : i === idx ? "cur" : ""}"></i>`).join("");
+  const done = idx >= words.length;
+  $("kb").hidden = done || results[idx] !== undefined; $("help").hidden = $("kb").hidden;
+  if (done){ $("rows").innerHTML = ""; $("hint").textContent = ""; return; }
+  const ans = words[idx], n = ans.length, rowsHtml = [];
+  $("hint").textContent = S.mots[idx].indice ? `Indice : ${S.mots[idx].indice}` : `${n} lettres`;
+  for (let r=0;r<ESSAIS;r++){
+    const g = guesses[r], res = g ? score(g, ans) : null, typing = !g && r === guesses.length ? current : "";
+    let cells = "";
+    for (let c=0;c<n;c++){
+      const ch = g ? g[c] : (typing[c] || "");
+      cells += `<div class="tile${g ? " " + res[c] : ch ? " filled" : ""}">${ch}</div>`;
+    }
+    rowsHtml.push(`<div class="row" data-r="${r}">${cells}</div>`);
+  }
+  $("rows").innerHTML = rowsHtml.join("");
+  // clavier coloré
+  const best = {};
+  guesses.forEach(g => score(g, ans).forEach((s,i) => { const L = g[i], rank = {ok:3, near:2, no:1}; if (!best[L] || rank[s] > rank[best[L]]) best[L] = s; }));
+  document.querySelectorAll(".kb button[data-k]").forEach(b => { b.className = (b.classList.contains("wide") ? "wide " : "") + (best[b.dataset.k] || ""); });
+  layout();
+}
+
+function buildKb(){
+  const rows = ["AZERTYUIOP","QSDFGHJKLM","↵WXCVBN⌫"];
+  $("kb").innerHTML = rows.map(r => `<div class="r">${[...r].map(k => k === "↵" ? `<button class="wide" data-k="ENTER" type="button">Valider</button>` : k === "⌫" ? `<button class="wide" data-k="BACK" type="button" aria-label="Effacer">⌫</button>` : `<button data-k="${k}" type="button">${k}</button>`).join("")}</div>`).join("");
+}
+
+function press(k){
+  if (busy || idx >= words.length || results[idx] !== undefined) return;
+  const ans = words[idx];
+  if (k === "BACK"){ current = current.slice(0,-1); render(); return; }
+  if (k === "ENTER"){ submit(); return; }
+  if (/^[A-Z]$/.test(k) && current.length < ans.length){ current += k; render(); }
+}
+
+function submit(){
+  const ans = words[idx], r = guesses.length;
+  if (current.length < ans.length){
+    const row = document.querySelector(`.row[data-r="${r}"]`); row.classList.remove("shake"); void row.offsetWidth; row.classList.add("shake");
+    toast(`Il faut ${ans.length} lettres`); return;
+  }
+  const g = current; current = ""; guesses.push(g); busy = true;
+  const res = score(g, ans);
+  // retournement case par case
+  const row = document.querySelector(`.row[data-r="${r}"]`), tiles = row.querySelectorAll(".tile");
+  tiles.forEach((t,i) => setTimeout(() => { t.classList.add("flip"); setTimeout(() => { t.className = "tile flip " + res[i]; }, reduce ? 0 : 250); }, reduce ? 0 : i*230));
+  const total = reduce ? 20 : tiles.length*230 + 320;
+  setTimeout(() => {
+    busy = false;
+    if (g === ans){
+      results[idx] = "won"; save(); render();
+      const tiles2 = document.querySelectorAll(`.row[data-r="${r}"] .tile`);
+      tiles2.forEach((t,i) => setTimeout(() => t.classList.add("bounce"), reduce ? 0 : i*90));
+      toast(["Génial","Magnifique","Impressionnant","Bien joué","Ouf"][Math.min(r, 4)] + (r === ESSAIS-1 ? " !" : ""));
+      setTimeout(() => showPanel(true), reduce ? 50 : 1100);
+    } else if (guesses.length >= ESSAIS){
+      results[idx] = "lost"; save(); render(); setTimeout(() => showPanel(false), reduce ? 50 : 600);
+    } else { save(); render(); }
+  }, total);
+}
+
+function showPanel(won){
+  const m = S.mots[idx], last = idx === words.length - 1;
+  $("panel").hidden = false;
+  $("panel").innerHTML = `<h2>${won ? "Trouvé" : "Raté, cette fois"}</h2>
+    ${won && m.emoji ? `<div class="emo" aria-hidden="true">${m.emoji}</div>` : ""}
+    <div class="word">${esc(norm(m.mot))}</div>
+    ${m.apres ? `<p>${esc(m.apres)}</p>` : ""}
+    <button class="btn" id="nextBtn" type="button">${last ? "Voir le bilan" : "Mot suivant"}</button>`;
+  $("nextBtn").focus();
+  $("nextBtn").addEventListener("click", () => { idx++; guesses = []; current = ""; save(); $("panel").hidden = true; if (idx >= words.length) finish(); else render(); });
+}
+
+function finish(fromLoad){
+  render();
+  const won = results.filter(r => r === "won").length;
+  $("panel").hidden = false;
+  $("panel").innerHTML = `<h2>${won === words.length ? "Sans faute" : "Série terminée"}</h2>
+    <p>${won === words.length ? esc(S.fin) : `${won} mot${won>1?"s":""} trouvé${won>1?"s":""} sur ${words.length}. Pas mal du tout.`}</p>
+    <p style="font-size:13px;color:var(--muted)">${S.mots.map((m,i) => `${results[i] === "won" ? "✓" : "✗"} ${esc(norm(m.mot))}`).join(" · ")}</p>
+    ${RETOUR ? `<a href="${esc(RETOUR)}">Revenir au calendrier</a>` : ""}`;
+  if (!fromLoad && won) confetti();
+}
+
+addEventListener("keydown", e => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (!$("panel").hidden && e.key === "Enter"){ const b = $("nextBtn"); if (b){ e.preventDefault(); b.click(); } return; }
+  if (e.key === "Enter"){ e.preventDefault(); press("ENTER"); }
+  else if (e.key === "Backspace"){ e.preventDefault(); press("BACK"); }
+  else { const k = norm(e.key); if (k.length === 1) press(k); }
+});
+$("kb").addEventListener("click", e => { const b = e.target.closest("button"); if (b) press(b.dataset.k); });
+addEventListener("resize", layout);
+
+/* ---- confettis ---- */
+function confetti(){
+  if (reduce) return;
+  const c = $("confetti"), x = c.getContext("2d"), d = Math.min(2, devicePixelRatio||1), w = innerWidth, h = innerHeight;
+  c.width = w*d; c.height = h*d; c.style.width = w+"px"; c.style.height = h+"px"; x.setTransform(d,0,0,d,0,0);
+  const cols = ["#e9c96f","#ecd9a6","#a9c8d9","#d9a7b8","#f2ece0","#a3424e","#a9c79f"]; let parts = [];
+  const piece = (px,py,a,sp) => ({x:px,y:py,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,g:.16+Math.random()*.08,w:5+Math.random()*6,h:8+Math.random()*8,r:Math.random()*6,vr:(Math.random()-.5)*.35,t:Math.random()*6,c:cols[(Math.random()*cols.length)|0],life:0});
+  for (let i=0;i<200;i++){ const s = i%2 ? 1 : -1; parts.push(piece(s>0?-10:w+10, h*.75, s>0 ? -Math.PI/3-Math.random()*.5 : -2*Math.PI/3+Math.random()*.5, 9+Math.random()*10)); }
+  for (let i=0;i<120;i++) parts.push(piece(Math.random()*w, -20-Math.random()*h*.5, Math.PI/2, 1+Math.random()*2));
+  (function tick(){ x.clearRect(0,0,w,h); parts = parts.filter(p => p.y < h+30 && p.life < 600);
+    for (const p of parts){ p.life++; p.vx *= .99; p.vy = p.vy*.99 + p.g; p.x += p.vx + Math.sin(p.t += .08)*.6; p.y += p.vy; p.r += p.vr;
+      x.save(); x.translate(p.x,p.y); x.rotate(p.r); x.scale(1,Math.cos(p.t)); x.fillStyle = p.c; x.fillRect(-p.w/2,-p.h/2,p.w,p.h); x.restore(); }
+    if (parts.length) requestAnimationFrame(tick); })();
+}
+
+/* ---- neige légère ---- */
+(function(){
+  if (reduce) return;
+  const c = $("snow"), x = c.getContext("2d"); let w, h, f = [];
+  function size(){ const d = Math.min(2, devicePixelRatio||1); w = innerWidth; h = innerHeight; c.width = w*d; c.height = h*d; c.style.width = w+"px"; c.style.height = h+"px"; x.setTransform(d,0,0,d,0,0);
+    f = Array.from({length:Math.min(90, Math.round(w/10))}, () => { const z = Math.random(); return {x:Math.random()*w, y:Math.random()*h, z, r:.5+z*2, s:.2+z*.6, o:Math.random()*6.3, a:.15+z*.45}; }); }
+  size(); addEventListener("resize", size);
+  (function tick(){ x.clearRect(0,0,w,h); x.fillStyle = "#f3f1ea";
+    for (const p of f){ p.y += p.s; p.o += .007; p.x += Math.sin(p.o)*(.2+p.z*.3); if (p.y > h+5){ p.y = -5; p.x = Math.random()*w; } x.globalAlpha = p.a; x.beginPath(); x.arc(p.x,p.y,p.r,0,7); x.fill(); }
+    x.globalAlpha = 1; requestAnimationFrame(tick); })();
+})();
+
+function init(){
+  if (!S){ $("rows").innerHTML = `<p class="help">Cette série n'existe pas encore.</p>`; $("kb").hidden = true; return; }
+  $("title").innerHTML = S.titre;
+  words = S.mots.map(m => norm(m.mot));
+  buildKb(); load();
+  if (idx >= words.length){ finish(true); return; }
+  render();
+  if (results[idx] !== undefined) showPanel(results[idx] === "won");
+}
+init();
+</script>
+
+</body>
+</html>

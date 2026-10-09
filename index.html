@@ -2708,7 +2708,7 @@ const CONFIG = {
   // écran affiché avant le 1er décembre
   messageAttente: "Vingt-quatre cases t'attendent, une par matin jusqu'à Noël. D'ici là, rien ne sert de revenir tous les jours. Mais tu peux.",
   // message caché derrière la boule dorée
-  secret: {titre:"Tu l'as trouvée", texte:["Il n'y avait que vingt-quatre cases. Celle-ci, c'est la vingt-cinquième.","Je t'aime."]}
+  secret: {titre:"Tu l'as trouvée", texte:["Il n'y avait que vingt-quatre cases. Celle-ci, c'est la vingt-cinquième.","Je t'aime 🧡."]}
 };
 
 // tier   : "or" (révélation courte), "givre" (rare : révélation longue + cachet),
@@ -2722,13 +2722,13 @@ const CONFIG = {
 const JOURS = [
   /* 1 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"mots.html#jeanne",
    titre:"Mots croisés, spécial Jeanne",
-   texte:"Pour commencer, une grille entièrement consacrée à toi : tes villes, tes concerts, tes petites manies. Vingt-deux mots, et une seule personne capable de tous les trouver."},
+   texte:"Pour commencer, une grille entièrement consacrée à toi : vingt-deux mots, et une seule personne capable de tous les trouver."},
   /* 2 */ {cat:"CAD", tier:"givre", quoi:"Vernis", nom:"Vernis", acces:"paquet",
    titre:"Une couleur pour décembre",
-   texte:"Un petit flacon pour des ongles de fête. Je n'ai demandé conseil à personne et j'assume entièrement mon choix."},
+   texte:"Un petit flacon pour des ongles de fête. Je n'ai demandé conseil à personne, logiquement la couleur te va."},
   /* 3 */ {cat:"CAD", tier:"or", quoi:"Marque-page", nom:"Marque-page", acces:"paquet",
    titre:"Pour garder ta page",
-   texte:"Un marque-page fait main, rien que pour toi. Fini les pages cornées."},
+   texte:"Un marque-page fait main, rien que pour toi. Fini les pages pliées."},
   /* 4 */ {cat:"CAD", tier:"or", quoi:"Origami", nom:"Origami", acces:"paquet",
    titre:"Plié pour toi",
    texte:"Un origami fait main, avec beaucoup de patience et un nombre de ratés que je préfère garder secret."},
@@ -2737,45 +2737,45 @@ const JOURS = [
    texte:["Aujourd'hui, c'est l'anniversaire de ma sœur Marie.","Ton cadeau du jour : à venir."]},
   /* 6 */ {cat:"CAD", tier:"or", quoi:"Un livre", nom:"Livre", acces:"paquet",
    titre:"Un livre pour les soirées d'hiver",
-   texte:"Un livre de poche choisi pour toi. Il tient dans un sac ou sur une table de nuit, et il se lit très bien sous un plaid."},
+   texte:"Un petit livre de poche (lu en 1 jour)."},
   /* 7 */ {cat:"JEU", tier:"or", quoi:"Connections", nom:"Connections", acces:"lien", lien:"liens.html#j7",
    titre:"Connections personnalisé",
-   texte:"Seize mots, quatre groupes cachés, et des liens taillés sur mesure : certains ne parleront qu'à toi. Méfie-toi des fausses pistes."},
+   texte:"Seize mots, quatre groupes cachés, et des liens taillés sur mesure."},
   /* 8 */ {cat:"CAD", tier:"givre", quoi:"Chocolat", nom:"Chocolat", acces:"paquet",
    titre:"Une pause chocolat",
-   texte:"Celui-ci ne se partage pas. Enfin, si tu veux, mais rien ne t'y oblige."},
+   texte:"C'est l'instant gourmand."},
   /* 9 */ {cat:"JEU", tier:"or", quoi:"Strands", nom:"Strands", acces:"lien", lien:"fil.html#concerts", icone:"micro",
    titre:"Tes concerts en lettres",
-   texte:"Douze artistes que tu as vus sur scène se cachent dans cette grille, reliés par un fil d'or. Tous les sens sont permis."},
+   texte:"Douze artistes que tu as vus sur scène se cachent dans cette grille, reliés par un fil d'or. Tous les sens sont permis (c'est pas le réel Strands)."},
   /* 10 */ {cat:"CAD", tier:"or", quoi:"Origami", nom:"Origami", acces:"paquet",
    titre:"Deuxième pliage",
    texte:"Un autre origami. J'ai fait des progrès depuis le 4, tu jugeras."},
   /* 11 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"",
    titre:"Mots croisés, spécial famille",
-   texte:"Une grille sur ta famille : les prénoms, les manies et les histoires qui reviennent à chaque repas. Tu joues à domicile, aucune excuse."},
+   texte:"Une grille sur ta famille. Tu joues à domicile, aucune excuse."},
   /* 12 */ {cat:"CAD", tier:"or", quoi:"Un livre", nom:"Livre", acces:"paquet",
    titre:"Un deuxième livre",
    texte:"Parce qu'un seul ne suffit pas pour tenir jusqu'à Noël."},
   /* 13 */ {cat:"MUS", tier:"or", quoi:"Playlist", nom:"Playlist", acces:"lien", lien:"https://open.spotify.com/playlist/2VXpSQBfizyQSoqLnrlwo7?si=odm2p8EnRhiaNmL3hTgj8g&utm_source=copy-link&pi=iPxbkwq_TJeZM&pt=7ac70732f42cd174d76e984b6a3812b1",
    titre:"Notre playlist",
-   texte:["Une playlist vouée à devenir la nôtre : les chansons qu'on écoute ensemble, celles que je fredonne sans m'en rendre compte, des plus surprenantes aux plus nulles.","Rejoins-la et ajoute les tiennes."]},
+   texte:["Une playlist vouée à devenir la nôtre : les chansons qu'on écoute ensemble, celles que je fredonne sans m'en rendre compte, des plus surprenantes aux plus nulles."]},
   /* 14 */ {cat:"CAD", tier:"givre", quoi:"Matcha", nom:"Matcha", acces:"paquet",
    titre:"Une pause matcha",
    texte:"Pour tes matins d'hiver."},
   /* 15 */ {cat:"CAD", tier:"or", quoi:"Bougie", nom:"Bougie", acces:"paquet",
    titre:"Une bougie",
-   texte:"Pour les fins de journée d'hiver : on l'allume, on éteint la grande lumière et on souffle un peu."},
+   texte:"Pour les fins de journée d'hiver : on l'allume, on éteint la grande lumière (peut-être qu'elle sent bon)."},
   /* 16 */ {cat:"INV", tier:"or", quoi:"Sushis maison", nom:"Sushis", acces:"",
-   titre:"Soirée sushis maison",
-   texte:"Une invitation pour une soirée sushis faits maison : riz, algues, saumon, avocat, et sûrement quelques makis un peu difformes. On choisit la date ensemble."},
-  /* 17 */ {cat:"CIN", tier:"or", quoi:"Soirée film", nom:"Soirée film", acces:"",
-   titre:"Ce soir, le film, c'est toi qui choisis",
-   texte:"Un Virginie Efira, Sex and the City, ou n'importe quel autre qui te fait envie : aucune négociation possible."},
+   titre:"Soirée sushis",
+   texte:"Une invitation pour une soirée sushis faits maison et sûrement quelques makis un peu difformes."},
+  /* 17 */ {cat:"SER", tier:"or", quoi:"The Bear", nom:"The Bear", acces:"",
+   titre:"The Bear",
+   texte:"Ce soir, on regarde « Gary », l'épisode spécial de The Bear."},
   /* 18 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"",
    titre:"Mots croisés, spécial copains",
-   texte:"Une grille réalisée par tes potes, avec leurs définitions, leurs souvenirs et sûrement quelques pièges."},
+   texte:"Une grille réalisée par tes potes, avec leurs définitions, leurs souvenirs."},
   /* 19 */ {cat:"ANN", tier:"fete", fete:"Marie-Françoise", sceau:"MF", quoi:"Wordle", nom:"Marie-Françoise", acces:"lien", lien:"wordle.html#jeanne",
-   titre:"L'anniversaire de Marie-Françoise",
+   titre:"Les 60 ans de la belle-mère",
    texte:["Aujourd'hui, c'est l'anniversaire de ma mère, Marie-Françoise.","Pour toi, cinq mots à deviner. Aucun indice, aucun thème : ils sont tirés un peu au hasard, et pas forcément simples."]},
   /* 20 */ {cat:"CAD", tier:"givre", quoi:"Un livre", nom:"Livre", acces:"paquet",
    titre:"Le dernier livre",
@@ -2786,9 +2786,9 @@ const JOURS = [
   /* 22 */ {cat:"CAD", tier:"or", quoi:"Chocolat", nom:"Chocolat", acces:"paquet",
    titre:"Encore un peu de chocolat",
    texte:"Pour patienter jusqu'à Noël."},
-  /* 23 */ {cat:"JEU", tier:"or", quoi:"Coloriage", nom:"Coloriage", acces:"lien", lien:"",
-   titre:"Le dernier coloriage",
-   texte:"Un dernier dessin pour la veille du réveillon, à colorier en attendant que tout soit prêt."},
+  /* 23 */ {cat:"INV", tier:"or", quoi:"Théâtre", nom:"Théâtre", acces:"",
+   titre:"Soirée théâtre",
+   texte:"À venir."},
   /* 24 */ {cat:"MOT", tier:"icone", quoi:"Joyeux Noël", nom:"Joyeux Noël", acces:"paquet", paquet:"Quand on se retrouvera",
    titre:"Joyeux Noël",
    texte:[
@@ -2801,7 +2801,7 @@ const JOURS = [
 ];
 
 /* ===================================================== */
-const CATS = {JEU:"À faire", CAD:"Petit cadeau", MUS:"Musique", MOT:"Petit mot", ANN:"Anniversaire", CIN:"Cinéma", INV:"Invitation"};
+const CATS = {JEU:"À faire", CAD:"Petit cadeau", MUS:"Musique", MOT:"Petit mot", ANN:"Anniversaire", CIN:"Cinéma", INV:"Invitation", SER:"Série"};
 const GIFT = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="1"/><path d="M3 7h18v3H3zM12 7v14"/><path d="M12 7c-2-4-6-4-6-1.5S10 7 12 7zM12 7c2-4 6-4 6-1.5S14 7 12 7z"/></svg>';
 function encart(d){
   const j = JOURS[d-1];

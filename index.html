@@ -2708,7 +2708,7 @@ const CONFIG = {
   // écran affiché avant le 1er décembre
   messageAttente: "Vingt-quatre cases t'attendent, une par matin jusqu'à Noël. D'ici là, rien ne sert de revenir tous les jours. Mais tu peux.",
   // message caché derrière la boule dorée
-  secret: {titre:"Tu l'as trouvée", texte:["Il n'y avait que vingt-quatre cases. Celle-ci, c'est la vingt-cinquième.","Bon pour un câlin, valable sans date limite et autant de fois que tu veux."]}
+  secret: {titre:"Tu l'as trouvée", texte:["Il n'y avait que vingt-quatre cases. Celle-ci, c'est la vingt-cinquième.","Je t'aime."]}
 };
 
 // tier   : "or" (révélation courte), "givre" (rare : révélation longue + cachet),
@@ -2728,19 +2728,19 @@ const JOURS = [
    texte:"Un petit flacon pour des ongles de fête. Je n'ai demandé conseil à personne et j'assume entièrement mon choix."},
   /* 3 */ {cat:"CAD", tier:"or", quoi:"Marque-page", nom:"Marque-page", acces:"paquet",
    titre:"Pour garder ta page",
-   texte:"Un marque-page fait main, rien que pour toi. Il attend sagement le premier livre de poche, qui arrive dans trois jours."},
+   texte:"Un marque-page fait main, rien que pour toi. Fini les pages cornées."},
   /* 4 */ {cat:"CAD", tier:"or", quoi:"Origami", nom:"Origami", acces:"paquet",
    titre:"Plié pour toi",
    texte:"Un origami fait main, avec beaucoup de patience et un nombre de ratés que je préfère garder secret."},
-  /* 5 */ {cat:"ANN", tier:"fete", fete:"Marie", sceau:"M", quoi:"Coloriage", nom:"Marie", acces:"lien", lien:"",
+  /* 5 */ {cat:"ANN", tier:"fete", fete:"Marie", sceau:"M", quoi:"", nom:"Marie", acces:"",
    titre:"L'anniversaire de Marie",
-   texte:["Aujourd'hui, ma sœur prend un an de plus. Un petit message de ta part lui fera plaisir.","En attendant, un coloriage fait maison. Crayons de couleur et chocolat chaud conseillés."]},
+   texte:["Aujourd'hui, c'est l'anniversaire de ma sœur Marie.","Ton cadeau du jour : à venir."]},
   /* 6 */ {cat:"CAD", tier:"or", quoi:"Un livre", nom:"Livre", acces:"paquet",
    titre:"Un livre pour les soirées d'hiver",
    texte:"Un livre de poche choisi pour toi. Il tient dans un sac ou sur une table de nuit, et il se lit très bien sous un plaid."},
-  /* 7 */ {cat:"JEU", tier:"or", quoi:"Les liens", nom:"Les liens", acces:"lien", lien:"liens.html#j7",
-   titre:"Les liens, version Jeanne",
-   texte:"Seize mots, quatre groupes cachés. Les liens sont plus personnels que d'habitude : certains ne parleront qu'à toi."},
+  /* 7 */ {cat:"JEU", tier:"or", quoi:"Connections", nom:"Connections", acces:"lien", lien:"liens.html#j7",
+   titre:"Connections personnalisé",
+   texte:"Seize mots, quatre groupes cachés, et des liens taillés sur mesure : certains ne parleront qu'à toi. Méfie-toi des fausses pistes."},
   /* 8 */ {cat:"CAD", tier:"givre", quoi:"Chocolat", nom:"Chocolat", acces:"paquet",
    titre:"Une pause chocolat",
    texte:"Celui-ci ne se partage pas. Enfin, si tu veux, mais rien ne t'y oblige."},
@@ -2752,37 +2752,36 @@ const JOURS = [
    texte:"Un autre origami. J'ai fait des progrès depuis le 4, tu jugeras."},
   /* 11 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"",
    titre:"Mots croisés, spécial famille",
-   texte:"Une grille sur ma famille : les prénoms, les manies et les histoires qu'on se raconte à chaque repas. Bonne chance."},
+   texte:"Une grille sur ta famille : les prénoms, les manies et les histoires qui reviennent à chaque repas. Tu joues à domicile, aucune excuse."},
   /* 12 */ {cat:"CAD", tier:"or", quoi:"Un livre", nom:"Livre", acces:"paquet",
    titre:"Un deuxième livre",
    texte:"Parce qu'un seul ne suffit pas pour tenir jusqu'à Noël."},
-  /* 13 */ {cat:"MUS", tier:"or", quoi:"Playlist", nom:"Playlist", acces:"lien", lien:"",
-   titre:"Une playlist pour toi",
-   texte:"Des morceaux choisis un par un. À écouter dans l'ordre, de préférence avec un casque et une boisson chaude."},
-  /* 14 */ {cat:"CAD", tier:"givre", quoi:"Du vin", nom:"Vin", acces:"paquet",
-   titre:"Un vin pour une soirée tranquille",
-   texte:"À ouvrir quand tu en as envie, idéalement pas toute seule."},
+  /* 13 */ {cat:"MUS", tier:"or", quoi:"Playlist", nom:"Playlist", acces:"lien", lien:"https://open.spotify.com/playlist/2VXpSQBfizyQSoqLnrlwo7?si=odm2p8EnRhiaNmL3hTgj8g&utm_source=copy-link&pi=iPxbkwq_TJeZM&pt=7ac70732f42cd174d76e984b6a3812b1",
+   titre:"Notre playlist",
+   texte:["Une playlist vouée à devenir la nôtre : les chansons qu'on écoute ensemble, celles que je fredonne sans m'en rendre compte, des plus surprenantes aux plus nulles.","Rejoins-la et ajoute les tiennes."]},
+  /* 14 */ {cat:"CAD", tier:"givre", quoi:"Matcha", nom:"Matcha", acces:"paquet",
+   titre:"Une pause matcha",
+   texte:"Pour tes matins d'hiver."},
   /* 15 */ {cat:"CAD", tier:"or", quoi:"Bougie", nom:"Bougie", acces:"paquet",
    titre:"Une bougie",
    texte:"Pour les fins de journée d'hiver : on l'allume, on éteint la grande lumière et on souffle un peu."},
   /* 16 */ {cat:"JEU", tier:"or", quoi:"Coloriage", nom:"Coloriage", acces:"lien", lien:"",
    titre:"Un deuxième coloriage",
    texte:"Un nouveau dessin à remplir de couleurs, toujours fait maison."},
-  /* 17 */ {cat:"CIN", tier:"or", quoi:"Sex and the City", nom:"SATC", acces:"",
-   titre:"Soirée Sex and the City",
-   texte:["Bon pour une soirée devant le film, plaid compris. Et pour faire les choses bien, le cocktail de Carrie :",
-          "Cosmopolitan : 4 cl de vodka citron, 1,5 cl de triple sec, 1,5 cl de jus de citron vert, 3 cl de jus de cranberry. Au shaker avec beaucoup de glace, servi dans un verre à cocktail, avec un zeste d'orange."]},
+  /* 17 */ {cat:"CIN", tier:"or", quoi:"Soirée film", nom:"Soirée film", acces:"",
+   titre:"Ce soir, le film, c'est toi qui choisis",
+   texte:"Un Virginie Efira, Sex and the City, ou n'importe quel autre qui te fait envie : aucune négociation possible."},
   /* 18 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"",
    titre:"Mots croisés, spécial copains",
-   texte:"Cette fois, la grille parle de nos amis. Certaines définitions pourraient provoquer des fous rires, d'autres des disputes."},
+   texte:"Une grille réalisée par tes potes, avec leurs définitions, leurs souvenirs et sûrement quelques pièges."},
   /* 19 */ {cat:"ANN", tier:"fete", fete:"Marie-Françoise", sceau:"MF", quoi:"Wordle", nom:"Marie-Françoise", acces:"lien", lien:"wordle.html#jeanne",
    titre:"L'anniversaire de Marie-Françoise",
-   texte:["Aujourd'hui, c'est l'anniversaire de ma mère. Un appel ou un message de ta part la touchera beaucoup.","Pour toi, une série de cinq mots à deviner. Six essais par mot, et pas toujours d'indice."]},
+   texte:["Aujourd'hui, c'est l'anniversaire de ma mère, Marie-Françoise.","Pour toi, cinq mots à deviner. Aucun indice, aucun thème : ils sont tirés un peu au hasard, et pas forcément simples."]},
   /* 20 */ {cat:"CAD", tier:"givre", quoi:"Un livre", nom:"Livre", acces:"paquet",
    titre:"Le dernier livre",
    texte:"Le troisième et dernier du mois, gardé pour la fin. Tu me diras lequel tu as préféré."},
-  /* 21 */ {cat:"JEU", tier:"or", quoi:"Les liens", nom:"Les liens", acces:"lien", lien:"liens.html#j21",
-   titre:"Les liens, le retour",
+  /* 21 */ {cat:"JEU", tier:"or", quoi:"Connections", nom:"Connections", acces:"lien", lien:"liens.html#j21",
+   titre:"Connections, le retour",
    texte:"Seize nouveaux mots, quatre nouveaux groupes. Plus difficile que la première fois, je préviens."},
   /* 22 */ {cat:"CAD", tier:"or", quoi:"Chocolat", nom:"Chocolat", acces:"paquet",
    titre:"Dernière pause chocolat",
@@ -2790,13 +2789,13 @@ const JOURS = [
   /* 23 */ {cat:"JEU", tier:"or", quoi:"Coloriage", nom:"Coloriage", acces:"lien", lien:"",
    titre:"Le dernier coloriage",
    texte:"Un dernier dessin pour la veille du réveillon, à colorier en attendant que tout soit prêt."},
-  /* 24 */ {cat:"MOT", tier:"icone", quoi:"Joyeux Noël", nom:"Joyeux Noël", acces:"paquet", paquet:"Sous le sapin",
-   titre:"Joyeux Noël, Jeanne",
+  /* 24 */ {cat:"MOT", tier:"icone", quoi:"Joyeux Noël", nom:"Joyeux Noël", acces:"paquet", paquet:"Quand on se retrouvera",
+   titre:"Joyeux Noël",
    texte:[
-     "Vingt-quatre matins : des grilles, des puzzles, du chocolat et quelques livres. J'espère que chaque case t'a arraché au moins un sourire.",
-     "Je voulais que ce mois de décembre te ressemble un peu : doux, gourmand, avec des fous rires et quelques surprises.",
-     "Merci d'avoir relu mon mémoire virgule par virgule, et merci pour tout le reste, qu'on ne dit pas assez.",
-     "Ton cadeau t'attend sous le sapin. Mais celui-ci, je voulais qu'il dure tout le mois.",
+     "Vingt-quatre matins. Des grilles à remplir, des mots à deviner, tes concerts retrouvés lettre par lettre, des pliages un peu maladroits, et une playlist qui deviendra la nôtre.",
+     "Derrière chaque case, il n'y avait qu'une idée : que chaque journée de ce mois commence par une pensée pour toi.",
+     "Merci pour tout, merci de rendre les choses simples un peu plus belles.",
+     "Ton cadeau t'attend pour le moment où l'on se retrouvera.",
      "P.-S. : une des boules de Noël, tout en haut, cache encore quelque chose."
    ]},
 ];
@@ -2831,7 +2830,7 @@ const QR_ICONS = {
   grille:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9.3h16M4 14.6h16M9.3 4v16M14.6 4v16"/><rect x="9.3" y="9.3" width="5.3" height="5.3" fill="currentColor"/>',
   etoile:'<path d="M12 2.5l2.6 6 6.4.6-4.9 4.2 1.5 6.3L12 16.3l-5.6 3.3 1.5-6.3L3 9.1l6.4-.6z"/>',
 };
-const QR_BY_QUOI = {"Mots croisés":"grille","Puzzle":"puzzle","Coloriage":"crayon","Les liens":"lien","Strands":"micro","Playlist":"note","Wordle":"lettres"};
+const QR_BY_QUOI = {"Mots croisés":"grille","Puzzle":"puzzle","Coloriage":"crayon","Les liens":"lien","Connections":"lien","Strands":"micro","Playlist":"note","Wordle":"lettres"};
 function themedQR(text, icon){
   const q = qrcode(0, "H"); q.addData(text); q.make();
   const n = q.getModuleCount(), m = 2, S = n + m*2;
@@ -2889,7 +2888,7 @@ const grid = document.getElementById("grid"), ticks = document.getElementById("t
 document.getElementById("yr").textContent = CONFIG.annee;
 if (CONFIG.prenom){
   document.getElementById("h1").innerHTML = `Pour ${esc(CONFIG.prenom)}, <em>vingt-quatre jours avant Noël</em>`;
-  document.getElementById("envAddr").textContent = CONFIG.prenom;
+  document.getElementById("envAddr").textContent = "Pour toi";
   document.getElementById("wax").textContent = CONFIG.prenom[0];
 }
 if (PREVIEW){
@@ -3145,6 +3144,7 @@ function buildNote(d){
 }
 
 function openCase(d, already){
+  eggOpen = false;
   cur = d; lastFocus = document.activeElement; running = false;
   const j = JOURS[d-1];
   ov.className = `t-${j.tier}`; ov.hidden = false; ov.scrollTop = 0; document.body.style.overflow = "hidden";
@@ -3201,7 +3201,7 @@ async function runOpening(){
 }
 
 async function runChristmas(){
-  const d = 24, name = CONFIG.prenom || "toi";
+  const d = 24, name = "toi";
   ov.classList.add("deep");
   FX.glitter(1);
   pack.classList.add("shake-long");
@@ -3240,7 +3240,68 @@ function finish(d){
 
 wax.addEventListener("click", () => { if (waxResolve) waxResolve(); });
 
+let eggOpen = false, burning = false;
+/* La case secrète ne se referme pas : elle brûle depuis les bords, il ne reste qu'un cœur, qui se consume à son tour. */
+function burnAway(el){
+  return new Promise(done => {
+    const r = el.getBoundingClientRect(), W = Math.ceil(r.width), H = Math.ceil(r.height), dpr = Math.min(2, devicePixelRatio || 1);
+    const cv = document.createElement("canvas");
+    Object.assign(cv.style, {position:"fixed", left:r.left+"px", top:r.top+"px", width:W+"px", height:H+"px", zIndex:40, pointerEvents:"none", overflow:"visible"});
+    cv.width = W*dpr; cv.height = H*dpr; document.body.appendChild(cv);
+    const x = cv.getContext("2d"); x.setTransform(dpr,0,0,dpr,0,0);
+    const m = document.createElement("canvas"); m.width = Math.ceil(W/2); m.height = Math.ceil(H/2); const mx = m.getContext("2d");
+    const cx = W/2, cy = H*.47, maxS = Math.hypot(W, H) / 15, sHeart = Math.min(W/34, H/31), dur = 3400, t0 = performance.now();
+    const ph = [Math.random()*6, Math.random()*6, Math.random()*6];
+    let embers = [];
+    const heart = (s, t) => { const p = []; for (let i=0;i<140;i++){ const a = i/140*Math.PI*2;
+      const hx = 16*Math.pow(Math.sin(a),3), hy = -(13*Math.cos(a) - 5*Math.cos(2*a) - 2*Math.cos(3*a) - Math.cos(4*a));
+      const n = 1 + .045*(Math.sin(a*7+ph[0]+t*3) + .6*Math.sin(a*13+ph[1]-t*2) + .4*Math.sin(a*29+ph[2]+t*5));
+      p.push([cx + hx*s*n, cy + hy*s*n]); } return p; };
+    const trace = (ctx, p, k=1) => { ctx.beginPath(); p.forEach(([px,py],i) => i ? ctx.lineTo(px*k,py*k) : ctx.moveTo(px*k,py*k)); ctx.closePath(); };
+    el.style.maskSize = el.style.webkitMaskSize = "100% 100%";
+    el.style.maskRepeat = el.style.webkitMaskRepeat = "no-repeat";
+    (function frame(now){
+      const p = Math.min(1, (now - t0) / dur), t = (now - t0)/1000;
+      // le feu avance des bords vers le centre, ralentit sur le cœur, puis le consume
+      let s;
+      if (p < .42){ const q = p/.42; s = maxS + (sHeart - maxS) * (1 - Math.pow(1-q, 2.2)); }
+      else if (p < .64){ s = sHeart * (1 - .08*(p-.42)/.22); }
+      else { const q = (p-.64)/.36; s = sHeart*.92 * (1 - Math.pow(q, 1.6)); }
+      s = Math.max(.01, s);
+      const pts = heart(s, t);
+      // il ne reste du papier qu'à l'intérieur du cœur
+      mx.globalCompositeOperation = "source-over"; mx.clearRect(0,0,m.width,m.height);
+      mx.fillStyle = "#fff"; trace(mx, pts, .5); mx.fill();
+      const url = `url(${m.toDataURL()})`; el.style.maskImage = url; el.style.webkitMaskImage = url;
+      // bord carbonisé et braise
+      x.clearRect(0,0,W,H); x.save(); x.beginPath(); x.rect(0,0,W,H); x.clip();
+      trace(x, pts); x.lineJoin = "round";
+      x.save(); x.clip();
+      x.strokeStyle = "rgba(60,28,8,.32)"; x.lineWidth = 34; x.stroke();
+      x.strokeStyle = "rgba(38,16,4,.8)"; x.lineWidth = 12; x.stroke();
+      x.restore(); trace(x, pts);
+      x.shadowColor = "#ff6a00"; x.shadowBlur = 16; x.strokeStyle = "#ff8a2a"; x.lineWidth = 3.2; x.stroke();
+      x.shadowBlur = 6; x.strokeStyle = "#ffe08a"; x.lineWidth = 1.1; x.stroke();
+      x.restore();
+      for (let i=0;i<4;i++){ const q = pts[(Math.random()*pts.length)|0]; if (q[0] > 0 && q[0] < W && q[1] > 0 && q[1] < H) embers.push({x:q[0], y:q[1], vx:(Math.random()-.5)*.7, vy:-.4-Math.random()*1.3, l:0, L:30+Math.random()*40, r:.8+Math.random()*1.6}); }
+      embers = embers.filter(b => b.l < b.L);
+      for (const b of embers){ b.l++; b.x += b.vx + Math.sin(b.l*.3)*.25; b.y += b.vy; const a = 1 - b.l/b.L;
+        x.globalAlpha = a; x.fillStyle = `hsl(${28 + 20*a}, 100%, ${55 + 25*a}%)`; x.beginPath(); x.arc(b.x, b.y, b.r, 0, 7); x.fill(); }
+      x.globalAlpha = 1;
+      if (p < 1) requestAnimationFrame(frame);
+      else { el.style.opacity = "0"; cv.style.transition = "opacity .5s"; cv.style.opacity = "0";
+        setTimeout(() => { cv.remove(); ["maskImage","webkitMaskImage","maskSize","webkitMaskSize","maskRepeat","webkitMaskRepeat","opacity"].forEach(k => el.style[k] = ""); done(); }, 520); }
+    })(t0);
+  });
+}
 function closeOv(){
+  if (burning) return;
+  if (eggOpen && !reduce){ burning = true; closeBtn.disabled = true; closeBtn.style.visibility = "hidden";
+    const seal = note.querySelector(".seal"); if (seal){ seal.style.transition = "opacity .4s"; seal.style.opacity = "0"; }
+    burnAway(note).then(() => { burning = false; closeBtn.disabled = false; closeBtn.style.visibility = ""; eggOpen = false; doClose(); }); return; }
+  eggOpen = false; doClose();
+}
+function doClose(){
   timers.forEach(clearTimeout); timers=[]; running = false; waxResolve = null;
   FX.clear();
   ov.hidden = true; ov.className = ""; document.body.style.overflow = "";
@@ -3282,6 +3343,7 @@ document.getElementById("baubles").addEventListener("click", e => {
 });
 function openEgg(){
   const sec = CONFIG.secret; if (!sec) return;
+  eggOpen = true;
   cur = null; lastFocus = document.activeElement; running = false;
   ov.className = "t-icone deep calm"; ov.hidden = false; ov.scrollTop = 0; document.body.style.overflow = "hidden";
   FX.clear(); FX.palette("icone");

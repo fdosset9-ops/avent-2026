@@ -2788,9 +2788,9 @@ const JOURS = [
   /* 16 */ {cat:"JEU", tier:"or", quoi:"Strands", nom:"Strands", acces:"lien", lien:"fil.html#concerts", icone:"micro",
    titre:"Tes concerts en lettres",
    texte:"Douze artistes que tu as vus sur scène se cachent dans cette grille, reliés par un fil d'or. Tous les sens sont permis (c'est pas le réel Strands)."},
-  /* 17 */ {cat:"CAD", tier:"or", quoi:"", nom:"Surprise", acces:"",
-   titre:"Une surprise",
-   texte:"Ton cadeau du jour : à venir."},
+  /* 17 */ {cat:"MUS", tier:"givre", quoi:"Wrapped", nom:"Wrapped", acces:"lien", lien:"wrapped.html",
+   titre:"Toi, sur scène",
+   texte:"Quinze ans de concerts résumés en quelques cartes. Touche l'écran pour avancer."},
   /* 18 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"",
    titre:"Mots croisés, spécial copains",
    texte:"Une grille réalisée par tes potes, avec leurs définitions, leurs souvenirs."},
@@ -2851,7 +2851,7 @@ const QR_ICONS = {
   grille:'<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 9.3h16M4 14.6h16M9.3 4v16M14.6 4v16"/><rect x="9.3" y="9.3" width="5.3" height="5.3" fill="currentColor"/>',
   etoile:'<path d="M12 2.5l2.6 6 6.4.6-4.9 4.2 1.5 6.3L12 16.3l-5.6 3.3 1.5-6.3L3 9.1l6.4-.6z"/>',
 };
-const QR_BY_QUOI = {"Mots croisés":"grille","Puzzle":"puzzle","Coloriage":"crayon","Les liens":"lien","Connections":"lien","Strands":"micro","Playlist":"note","Wordle":"lettres","Piano":"piano"};
+const QR_BY_QUOI = {"Mots croisés":"grille","Puzzle":"puzzle","Coloriage":"crayon","Les liens":"lien","Connections":"lien","Strands":"micro","Playlist":"note","Wordle":"lettres","Piano":"piano","Wrapped":"note"};
 function themedQR(text, icon){
   const q = qrcode(0, "H"); q.addData(text); q.make();
   const n = q.getModuleCount(), m = 2, S = n + m*2;

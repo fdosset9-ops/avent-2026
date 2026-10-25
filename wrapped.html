@@ -1,0 +1,549 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Jeanne, sur scène</title>
+<link rel="icon" id="fav" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%2312241f%22/%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%2258%22%20height%3D%2258%22%20rx%3D%2211%22%20fill%3D%22none%22%20stroke%3D%22%23c9a968%22%20stroke-width%3D%222%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M32%2011l5.6%2013%2014.1%201.2-10.7%209.3%203.2%2013.8L32%2040.9l-12.2%207.4%203.2-13.8-10.7-9.3%2014.1-1.2z%22%20fill%3D%22%23ecd9a6%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..800;1,6..96,400..700&family=Jost:wght@300;400;500;600;700&display=swap">
+<style>
+/* Concept : un « Wrapped » de stories plein écran, comme une soirée de concert — lumières de scène, billet, bracelet de festival,
+   vinyle, carte en symboles proportionnels. Velours vert, bordeaux, or et givre du calendrier ; chiffres géants en Bodoni. */
+:root{
+  --night:#0b1512; --pine:#12241f; --pine-hi:#1a332c;
+  --gold:#c9a968; --gold-hi:#ecd9a6; --frost:#a9c8d4; --berry:#7d2430; --rose:#e2a493;
+  --ink:#efe9dc; --paper:#f2ece0; --paper-ink:#1c2a24;
+  --f-display:"Bodoni Moda","Didot","Times New Roman",serif;
+  --f-body:"Jost","Futura",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{background:#050a08;color:var(--ink);font-family:var(--f-body);font-weight:300;overflow:hidden;-webkit-user-select:none;user-select:none;padding:0}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:30}
+.deck{position:fixed;inset:0;display:grid;place-items:center}
+.frame{position:relative;width:min(440px,100vw);height:min(100%,880px);overflow:hidden;box-shadow:0 30px 80px -30px #000;isolation:isolate}
+@media (min-width:480px){.frame{border-radius:18px}}
+/* grain */
+.frame::after{content:"";position:absolute;inset:0;z-index:8;pointer-events:none;opacity:.09;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.bars{position:absolute;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top,0px));display:flex;gap:3px;z-index:7}
+.bars i{flex:1;height:3px;border-radius:2px;background:rgba(255,255,255,.22);overflow:hidden;position:relative}
+.bars i b{position:absolute;inset:0;width:0;background:#fff;border-radius:2px}
+.bars i.done b{width:100%}
+.bars i.cur b{animation:fill var(--dur,7s) linear forwards}
+.bars.paused i.cur b{animation-play-state:paused}
+@keyframes fill{to{width:100%}}
+.brand{position:absolute;left:16px;top:calc(22px + env(safe-area-inset-top,0px));z-index:7;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.8);mix-blend-mode:difference}
+.close{position:absolute;right:10px;top:calc(17px + env(safe-area-inset-top,0px));z-index:9;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#fff;text-decoration:none;padding:6px 8px;mix-blend-mode:difference}
+
+/* cartes */
+.slide{position:absolute;inset:0;isolation:isolate;overflow:hidden;pointer-events:none;padding:74px 26px calc(46px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;justify-content:center;gap:12px;
+  visibility:hidden;opacity:0;transform:scale(1.04);transition:opacity .5s ease,transform .6s cubic-bezier(.2,.8,.2,1),visibility 0s .6s}
+.slide.on{z-index:6;visibility:visible;opacity:1;transform:none;transition:opacity .5s ease,transform .6s cubic-bezier(.2,.8,.2,1)}
+.bg{position:absolute;inset:-20%;z-index:-2}
+.blob{position:absolute;border-radius:50%;filter:blur(46px);opacity:.9;animation:float 14s ease-in-out infinite alternate}
+@keyframes float{to{transform:translate(var(--mx,40px),var(--my,-60px)) scale(1.15)}}
+.t-pine{background:#0f201b} .t-berry{background:#3b0e15} .t-gold{background:#a07b30;color:#1f1708} .t-frost{background:#5b8496;color:#0f2630} .t-night{background:#060c0a} .t-paper{background:#efe7d6;color:var(--paper-ink)}
+.k{opacity:0;transform:translateY(16px)}
+.slide.on .k{animation:kin .7s cubic-bezier(.2,.8,.2,1) forwards;animation-delay:calc(var(--d,0) * 1s)}
+@keyframes kin{to{opacity:1;transform:none}}
+.eyebrow{font-weight:600;letter-spacing:.3em;text-transform:uppercase;font-size:11px;opacity:.85}
+.big{font-family:var(--f-display);font-weight:600;font-size:clamp(100px,34vw,160px);line-height:.82;letter-spacing:-.04em;font-variant-numeric:lining-nums tabular-nums}
+.big small{font-size:.3em;font-weight:400;letter-spacing:0}
+.outline{color:transparent;-webkit-text-stroke:1.6px var(--gold-hi)}
+h1,h2{margin:0;font-family:var(--f-display);font-style:italic;font-weight:400;line-height:1;text-wrap:balance}
+h1{font-size:clamp(50px,14vw,72px)}
+h2{font-size:clamp(30px,8.6vw,44px)}
+h1 em,h2 em{font-style:normal;font-weight:600}
+.t-pine em,.t-night em,.t-berry em{color:var(--gold-hi)}
+p{margin:0;font-size:16.5px;line-height:1.45;max-width:30ch}
+.muted{opacity:.78}
+.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:8px}
+.row3 div{border-top:1px solid currentColor;padding-top:8px}
+.row3 b{display:block;font-family:var(--f-display);font-size:34px;font-weight:600;line-height:1}
+.row3 span{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.8}
+.list{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:7px}
+.list li{display:flex;align-items:baseline;gap:12px;font-size:16px}
+.list li b{font-family:var(--f-display);font-weight:600;font-size:22px;min-width:2.2ch;text-align:right}
+.list li span{flex:1}
+.list li small{font-size:12px;opacity:.75}
+
+/* intro : égaliseur */
+.eq{display:flex;align-items:flex-end;gap:5px;height:70px;margin-bottom:10px}
+.eq i{width:9px;background:var(--gold-hi);border-radius:2px;animation:eq 1s ease-in-out infinite alternate;animation-delay:calc(var(--i) * -.17s)}
+@keyframes eq{0%{height:12%}100%{height:100%}}
+/* projecteurs */
+.beams{position:absolute;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+.beams i{position:absolute;top:-10%;width:42%;height:120%;transform-origin:top center;background:linear-gradient(180deg,rgba(255,244,214,.38),rgba(255,244,214,0) 80%);
+  clip-path:polygon(45% 0,55% 0,100% 100%,0 100%);animation:sweep 6s ease-in-out infinite alternate;mix-blend-mode:screen}
+.beams i:nth-child(1){left:-6%;--a:-18deg;--b:12deg}
+.beams i:nth-child(2){left:30%;--a:10deg;--b:-14deg;animation-delay:-2s}
+.beams i:nth-child(3){right:-6%;--a:16deg;--b:-10deg;animation-delay:-4s}
+@keyframes sweep{from{transform:rotate(var(--a))}to{transform:rotate(var(--b))}}
+
+/* quiz */
+.quiz{display:grid;gap:9px;margin-top:8px;position:relative;z-index:6}
+.quiz button{font:500 20px var(--f-body);padding:14px;border-radius:40px;border:1.5px solid currentColor;background:transparent;color:inherit;cursor:pointer;transition:background .2s,transform .2s}
+.quiz button:hover{transform:scale(1.02)}
+.quiz button.good{background:var(--gold-hi);color:#1f1708;border-color:var(--gold-hi)}
+.quiz button.bad{opacity:.35;text-decoration:line-through}
+.quiz button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.reveal{display:none} .revealed .reveal{display:grid;gap:10px} .revealed .ask{display:none}
+
+/* billet */
+.ticket{position:relative;display:grid;grid-template-columns:1fr 86px;background:var(--paper);color:var(--paper-ink);border-radius:10px;box-shadow:0 30px 50px -25px #000;transform:rotate(-4deg)}
+.ticket::before,.ticket::after{content:"";position:absolute;right:76px;width:20px;height:20px;border-radius:50%;background:#3b0e15}
+.ticket::before{top:-10px} .ticket::after{bottom:-10px}
+.ticket .main{padding:18px 18px 16px;display:grid;gap:6px;border-right:2px dashed rgba(28,42,36,.3)}
+.ticket .main small{font-size:10px;letter-spacing:.24em;text-transform:uppercase;opacity:.6}
+.ticket .main b{font-family:var(--f-display);font-size:30px;font-style:italic;font-weight:600;line-height:1}
+.ticket .main span{font-size:14px}
+.ticket .stub{display:grid;place-items:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;letter-spacing:.3em;text-transform:uppercase;font-weight:600;color:var(--berry)}
+.stamp{position:absolute;right:96px;bottom:12px;border:2.5px solid var(--berry);color:var(--berry);border-radius:6px;padding:3px 9px;font-weight:700;font-size:13px;letter-spacing:.12em;transform:rotate(-14deg);opacity:0}
+.slide.on .stamp{animation:stamp .35s 1.4s cubic-bezier(.2,1.8,.4,1) forwards}
+@keyframes stamp{from{opacity:0;transform:rotate(-14deg) scale(2.2)}to{opacity:.85;transform:rotate(-14deg) scale(1)}}
+
+/* histogramme */
+.chart{display:flex;align-items:flex-end;gap:4px;height:160px;margin-top:6px}
+.chart div{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:5px;height:100%}
+.chart i{display:block;width:100%;border-radius:3px 3px 0 0;background:rgba(239,233,220,.25);height:0;transition:height 1s cubic-bezier(.2,.8,.2,1)}
+.chart div.hi i{background:var(--gold-hi);box-shadow:0 0 18px rgba(236,217,166,.6)}
+.chart span{font-size:9px;opacity:.65;writing-mode:vertical-rl;transform:rotate(180deg)}
+.chart em{font-style:normal;font-size:11px;font-weight:700;color:var(--gold-hi);height:14px}
+
+/* bracelet */
+.band{position:relative;margin:6px -40px 4px;padding:16px 60px;background:repeating-linear-gradient(90deg,#7d2430 0 18px,#8e2c39 18px 36px);color:#fff4dc;transform:rotate(-6deg);
+  box-shadow:0 18px 30px -18px #000;display:flex;justify-content:space-between;align-items:center;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
+.band b{font-family:var(--f-display);font-style:italic;letter-spacing:0;text-transform:none;font-size:34px}
+.band::after{content:"";position:absolute;right:30px;top:50%;width:26px;height:26px;margin-top:-13px;border-radius:5px;background:linear-gradient(135deg,#ecd9a6,#a07b30)}
+.slide.on .band{animation:bandin .8s cubic-bezier(.2,1.2,.3,1) both}
+@keyframes bandin{from{transform:translateX(-120%) rotate(-6deg)}}
+
+/* carte */
+.map{position:relative;width:100%;aspect-ratio:1/1.02;margin-top:4px}
+.map svg{width:100%;height:100%;overflow:visible}
+.map .grat{stroke:currentColor;stroke-width:.5;opacity:.18;fill:none}
+.map circle.sym{fill:rgba(236,217,166,.55);stroke:#fff6dc;stroke-width:1;transform-box:fill-box;transform-origin:center;transform:scale(0)}
+.slide.on .map circle.sym{animation:popc .7s cubic-bezier(.2,1.5,.4,1) forwards;animation-delay:calc(var(--d) * 1s)}
+@keyframes popc{to{transform:scale(1)}}
+.map text{font:500 9.5px var(--f-body);fill:currentColor;opacity:.9}
+.map .cap{font-size:8px;opacity:.55;letter-spacing:.08em}
+
+/* vinyle */
+.vinyl{position:relative;width:min(230px,58vw);aspect-ratio:1;margin:0 auto 6px;border-radius:50%;
+  background:repeating-radial-gradient(circle,#111 0 2px,#1d1d1d 2px 4px);box-shadow:0 20px 40px -18px #000,inset 0 0 0 1px rgba(255,255,255,.06);animation:spin 5s linear infinite}
+.vinyl::before{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,transparent 0 40deg,rgba(255,255,255,.1) 50deg,transparent 60deg 220deg,rgba(255,255,255,.08) 230deg,transparent 240deg)}
+.vinyl .label{position:absolute;inset:33%;border-radius:50%;background:radial-gradient(circle,#0b1512 0 7%,var(--gold-hi) 8% 100%);display:grid;place-items:center;text-align:center;
+  color:#1f1708;font-family:var(--f-display);font-style:italic;font-size:12px;line-height:1.05;padding:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* échelle */
+.scale{position:relative;height:220px;display:flex;align-items:flex-end;justify-content:center;gap:26px;margin-top:6px}
+.scale div{display:grid;justify-items:center;gap:8px;text-align:center}
+.scale .c{border-radius:50%;background:var(--gold-hi);box-shadow:0 0 30px rgba(236,217,166,.4);transform:scale(0);transition:transform 1.1s cubic-bezier(.2,1.3,.4,1)}
+.slide.on .scale .c{transform:scale(1)}
+.scale b{font-family:var(--f-display);font-size:26px;font-weight:600;line-height:1}
+.scale small{font-size:12px;opacity:.85;line-height:1.25}
+
+/* foule */
+.crowd{display:grid;grid-template-columns:repeat(20,1fr);gap:4px;margin:6px 0}
+.crowd i{aspect-ratio:1;border-radius:50%;background:currentColor;opacity:0;transform:scale(.3)}
+.slide.on .crowd i{animation:dot .4s ease forwards;animation-delay:calc(var(--d) * 1s)}
+@keyframes dot{to{opacity:.85;transform:none}}
+
+/* répartitions */
+.split{display:flex;height:14px;border-radius:7px;overflow:hidden;margin-top:6px;background:rgba(0,0,0,.2)}
+.split i{display:block;height:100%;width:0;transition:width 1.1s cubic-bezier(.2,.8,.2,1)}
+.legend{display:flex;justify-content:space-between;font-size:13px;margin-top:6px;gap:8px}
+.donut{width:150px;height:150px;margin:2px auto 0;display:block}
+.donut circle{fill:none;stroke-width:5}
+
+/* profil */
+.badge{display:grid;place-items:center;width:130px;height:130px;margin:0 auto 4px;border-radius:50%;border:1.5px solid currentColor;position:relative}
+.badge::before{content:"";position:absolute;inset:8px;border-radius:50%;border:1px dashed currentColor;opacity:.5;animation:spin 30s linear infinite}
+.badge svg{width:56px;height:56px}
+.traits{display:grid;gap:8px;margin-top:6px}
+.traits div{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid rgba(28,42,36,.2);padding-bottom:6px;font-size:15px}
+.traits b{font-weight:600}
+
+/* récap */
+.poster{background:var(--paper);color:var(--paper-ink);border-radius:6px;padding:20px 18px 16px;display:grid;gap:12px;box-shadow:0 30px 60px -30px #000}
+.poster h3{margin:0;font-family:var(--f-display);font-style:italic;font-weight:600;font-size:26px;line-height:1}
+.poster .g{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+.poster .g div{display:grid;gap:2px}
+.poster small{font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;opacity:.6;font-weight:600}
+.poster b{font-family:var(--f-display);font-size:19px;font-weight:600;line-height:1.1}
+.poster .foot{display:flex;justify-content:space-between;font-size:10px;letter-spacing:.2em;text-transform:uppercase;opacity:.6;border-top:1px solid rgba(28,42,36,.2);padding-top:8px}
+
+/* son */
+.sound{position:absolute;right:72px;top:calc(13px + env(safe-area-inset-top,0px));z-index:9;width:34px;height:34px;border:0;background:transparent;color:#fff;cursor:pointer;display:grid;place-items:center;mix-blend-mode:difference}
+.sound svg{width:20px;height:20px}
+.sound:focus-visible{outline:1px solid #fff}
+.np{position:absolute;left:16px;right:16px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:7;display:flex;align-items:center;gap:10px;font-size:12px;letter-spacing:.04em;
+  opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s;pointer-events:none}
+.np.on{opacity:.92;transform:none}
+.np img{width:34px;height:34px;border-radius:4px;object-fit:cover;box-shadow:0 4px 10px -4px #000}
+.np .txt{display:grid;line-height:1.25;min-width:0}
+.np .txt b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np .txt span{opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np .wave{display:flex;gap:2px;align-items:flex-end;height:14px;margin-left:auto}
+.np .wave i{width:3px;background:currentColor;border-radius:1px;animation:eq .8s ease-in-out infinite alternate;animation-delay:calc(var(--i) * -.2s)}
+.np.paused .wave i{animation-play-state:paused}
+.slide .quiz,.slide .choice,.slide .end-actions{pointer-events:auto}
+.choice{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;position:relative;z-index:6}
+.choice button{font:500 13px var(--f-body);letter-spacing:.16em;text-transform:uppercase;padding:13px 18px;border-radius:30px;border:1.5px solid var(--gold-hi);background:transparent;color:var(--gold-hi);cursor:pointer}
+.choice button.main{background:var(--gold-hi);color:var(--night)}
+.choice button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.tap{position:absolute;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));text-align:center;font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;opacity:.6;animation:blink 2s ease-in-out infinite}
+@keyframes blink{50%{opacity:.25}}
+.zone{position:absolute;top:0;bottom:0;z-index:5;cursor:pointer;background:transparent;border:0;padding:0}
+.zone.prev{left:0;width:30%} .zone.next{right:0;width:70%}
+.zone:focus-visible{outline:none}
+.end-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;position:relative;z-index:6}
+.btn{font-family:var(--f-body);font-size:12px;letter-spacing:.22em;text-transform:uppercase;padding:12px 16px;border-radius:30px;border:1px solid rgba(239,233,220,.5);color:var(--ink);background:transparent;text-decoration:none;cursor:pointer}
+.btn.main{background:var(--gold-hi);color:var(--night);border-color:var(--gold-hi)}
+.btn:focus-visible{outline:1px solid #fff;outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+</style>
+
+</head>
+<body>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<div class="deck">
+  <div class="frame" id="frame">
+    <div class="bars" id="bars"></div>
+    <div class="brand">Jeanne · Wrapped</div>
+    <a class="close" href="index.html">Fermer</a>
+    <button class="sound" id="sound" type="button" aria-label="Activer le son" aria-pressed="false"></button>
+    <div class="np" id="np" aria-live="polite"></div>
+    <div id="slides"></div>
+    <button class="zone prev" id="prev" type="button" aria-label="Carte précédente"></button>
+    <button class="zone next" id="next" type="button" aria-label="Carte suivante"></button>
+  </div>
+</div>
+
+<script>
+/* =====================================================
+   Données : tableau « SUIVI CONCERTS ».
+   [date, artiste, salle/festival, ville, capacité, note, cadre, genre]
+   Ajoute des lignes : toutes les cartes se recalculent.
+   ===================================================== */
+const PRENOM = "Jeanne";
+const DATA = [["18/11/2011", "SINSEMILIA", "OLYMPIA", "PARIS", "2800", "/", "PERSO", "H"], ["26/11/2011", "SINSEMILIA", "SUMMUM", "GRENOBLE", "4000", "/", "PERSO", "H"], ["21/10/2015", "BIGFLO & OLI", "LES PASSAGERS DU ZINC", "CHATEAURENARD", "300", "9", "PERSO", "H"], ["12/03/2016", "BIGFLO & OLI", "THEATRE LE RHONE", "BOURG LES VALENCE", "1250", "7,5", "PERSO", "H"], ["02/08/2014", "NAAMAN", "REGGAE SUN SKA", "BORDEAUX", "15000", "8", "PERSO", "H"], ["02/03/2018", "ORELSAN", "SUMMUM", "GRENOBLE", "4000", "9", "PERSO", "H"], ["30/08/2019", "SINSEMILIA", "LISIEUX", "LISIEUX", "?", "/", "PERSO", "H"], ["23/11/2019", "SINSEMILIA", "ELYSEE MONTMARTRE", "PARIS", "1400", "/", "PERSO", "H"], ["05/10/2021", "VERDI", "LA FENICE", "VENISE", "1100", "/", "PERSO", "H"], ["27/11/2021", "SINSEMILIA", "SUMMUM", "GRENOBLE", "4000", "/", "PERSO", "H"], ["26/03/2022", "SOFIANE PAMART", "BOURSE DU TRAVAIL", "LYON", "1800", "7,5", "PERSO", "H"], ["01/04/2022", "VIANNEY", "PALAIS DES SPORTS", "GRENOBLE", "8000", "6,5", "BOULOT", "H"], ["15/04/2022", "NINHO", "PALAIS DES SPORTS", "GRENOBLE", "8000", "6", "BOULOT", "H"], ["16/04/2022", "ORELSAN", "PALAIS DES SPORTS", "GRENOBLE", "8000", "9", "BOULOT", "H"], ["12/05/2022", "ANGELE", "PALAIS DES SPORTS", "GRENOBLE", "8000", "7", "BOULOT", "F"], ["04/06/2022", "LOUS & THE YAKUZA", "WE LOVE GREEN", "PARIS", "40000", "6,5", "BOULOT", "F"], ["04/06/2022", "SCH", "WE LOVE GREEN", "PARIS", "40000", "6,5", "BOULOT", "H"], ["05/06/2022", "CENTRAL CEE", "WE LOVE GREEN", "PARIS", "40000", "6", "BOULOT", "H"], ["05/06/2022", "ANGELE", "WE LOVE GREEN", "PARIS", "40000", "7", "BOULOT", "F"], ["05/06/2022", "PNL", "WE LOVE GREEN", "PARIS", "40000", "7,5", "BOULOT", "H"], ["25/06/2022", "INDOCHINE", "GROUPAMA STADIUM", "LYON", "70000", "7", "BOULOT", "H"], ["06/07/2022", "ORELSAN", "MUSILAC", "AIX-LES-BAINS", "30000", "8,5", "BOULOT", "H"], ["09/07/2022", "MIKA", "MUSILAC", "AIX-LES-BAINS", "30000", "8,5", "BOULOT", "H"], ["19/07/2022", "THE ROLLING STONES", "GROUPAMA STADIUM", "LYON", "70000", "8,5", "BOULOT", "H"], ["25/08/2022", "IDLES", "ROCK EN SEINE", "PARIS", "40000", "8", "PERSO", "H"], ["25/08/2022", "ARCTIC MONKEYS", "ROCK EN SEINE", "PARIS", "40000", "9", "PERSO", "H"], ["28/08/2022", "AURORA", "ROCK EN SEINE", "PARIS", "40000", "8,75", "PERSO", "F"], ["28/08/2022", "STROMAE", "ROCK EN SEINE", "PARIS", "40000", "8,5", "PERSO", "H"], ["01/10/2022", "HANS ZIMMER", "PALAIS DES SPORTS", "GRENOBLE", "8000", "6,5", "PERSO", "H"], ["02/11/2022", "NAAMAN", "BELLE ELECTRIQUE", "GRENOBLE", "1000", "9,75", "PERSO", "H"], ["08/04/2023", "MIKE ET RIKE", "EUROPEEN", "PARIS", "350", "/", "PERSO", "H"], ["31/05/2023", "LUIDJI", "WE LOVE GREEN", "PARIS", "40000", "8", "PERSO", "H"], ["31/05/2023", "HAMZA", "WE LOVE GREEN", "PARIS", "40000", "7", "PERSO", "H"], ["18/06/2023", "BIANCA COSTA", "MARSATAC", "MARSEILLE", "15000", "7", "BOULOT", "F"], ["18/06/2023", "MERYL", "MARSATAC", "MARSEILLE", "15000", "8,5", "BOULOT", "F"], ["18/06/2023", "AYA NAKAMURA", "MARSATAC", "MARSEILLE", "15000", "8,5", "BOULOT", "F"], ["08/07/2023", "IGGY POP", "MUSILAC", "AIX-LES-BAINS", "30000", "7", "BOULOT", "H"], ["20/07/2023", "M", "THEATRE ANTIQUE", "VIENNE", "8000", "7", "BOULOT", "H"], ["23/08/2023", "GIRL IN RED", "ROCK EN SEINE", "PARIS", "40000", "7", "PERSO", "F"], ["23/08/2023", "BILLIE EILISH", "ROCK EN SEINE", "PARIS", "40000", "7", "PERSO", "F"], ["14/10/2023", "LOUIS TOMLINSON", "ACCOR ARENA", "PARIS", "20000", "7", "PERSO", "H"], ["22/11/2023", "HAMZA", "ACCOR ARENA", "PARIS", "20000", "7,5", "BOULOT", "H"], ["15/12/2023", "HATIK", "BATACLAN", "PARIS", "1500", "6", "PERSO", "H"], ["15/12/2023", "RONISIA", "BATACLAN", "PARIS", "1500", "6", "PERSO", "F"], ["15/12/2023", "SOSO MANESS", "BATACLAN", "PARIS", "1500", "7", "PERSO", "H"], ["15/12/2023", "LE JUIICE", "BATACLAN", "PARIS", "1500", "7,5", "PERSO", "F"], ["29/03/2024", "SHAY", "OLYMPIA", "PARIS", "2800", "9,75", "PERSO", "F"], ["22/05/2024", "TIF", "ZENITH", "PARIS", "6700", "8", "PERSO", "H"], ["03/06/2024", "TAYLOR SWIFT", "GROUPAMA STADIUM", "LYON", "70000", "9", "BOULOT", "F"], ["12/07/2024", "HERVE", "MUSILAC", "AIX-LES-BAINS", "30000", "6,5", "BOULOT", "H"], ["13/07/2024", "MACKLEMORE", "MUSILAC", "AIX-LES-BAINS", "30000", "9", "BOULOT", "H"], ["21/08/2024", "POMME", "ROCK EN SEINE", "PARIS", "40000", "8,5", "PERSO", "F"], ["21/08/2024", "LANA DEL REY", "ROCK EN SEINE", "PARIS", "40000", "5", "PERSO", "F"], ["30/08/2024", "YOA", "ROSE FESTIVAL", "TOULOUSE", "40000", "8,5", "BOULOT", "F"], ["30/08/2024", "PLK", "ROSE FESTIVAL", "TOULOUSE", "40000", "8,5", "BOULOT", "H"], ["15/09/2024", "JORJA SMITH", "RADIANT BELLEVUE", "LYON", "2500", "9", "BOULOT", "F"], ["01/10/2024", "MYLENE FARMER", "STADE DE FRANCE", "PARIS", "80000", "9,25", "BOULOT", "F"], ["02/11/2024", "CHILLA", "MAROQUINERIE", "PARIS", "500", "8", "PERSO", "F"], ["25/11/2024", "CLEMENT VIKTOROVICH", "THEATRE SAINT GEORGES", "PARIS", "500", "6", "PERSO", "H"], ["27/11/2024", "FANNY RUWET", "LE ZEBRE DE BELLEVILLE", "PARIS", "150", "7", "PERSO", "F"], ["28/11/2024", "PANAYOTIS PASCOT", "EUROPEEN", "PARIS", "350", "9", "PERSO", "H"], ["30/11/2024", "GRAND CORPS MALADE", "PALAIS DES SPORTS", "GRENOBLE", "8000", "7,5", "BOULOT", "H"], ["10/12/2024", "SCH", "ACCOR ARENA", "PARIS", "20000", "5", "PERSO", "H"], ["13/12/2024", "WALY DIA", "SUMMUM", "GRENOBLE", "4000", "9", "BOULOT", "H"], ["18/01/2025", "ATEEZ", "LDLC ARENA", "LYON", "16000", "7", "PERSO", "H"], ["29/01/2025", "ZAHO DE SAGAZAN", "ZENITH", "PARIS", "6700", "9", "PERSO", "F"], ["04/02/2025", "INDOCHINE", "LDLC ARENA", "LYON", "16000", "6", "BOULOT", "H"], ["08/02/2025", "LA PROCHAINE FOIS QUE TU MORDRAS LA POUSSIERE", "THEATRE DU PETIT SAINT MARTIN", "PARIS", "200", "7,5", "PERSO", "H"], ["15/02/2025", "LE SOLDAT ROSE", "GRAND ANGLE", "VOIRON", "1700", "6", "BOULOT", "H"], ["27/02/2025", "LAURA CAHEN", "ST PANCRAS OLD CHURCH", "LONDRES", "200", "6", "BOULOT", "F"], ["05/03/2025", "OKLOU", "CIGALE", "PARIS", "1500", "8,75", "PERSO", "F"], ["20/03/2025", "CLARA LUCIANI", "PALAIS DES SPORTS", "GRENOBLE", "8000", "6,5", "BOULOT", "F"], ["22/03/2025", "SOPRANO", "PALAIS DES SPORTS", "GRENOBLE", "8000", "7,5", "BOULOT", "H"], ["28/03/2025", "STEEL PULSE", "OLYMPIA", "PARIS", "2800", "7,5", "PERSO", "H"], ["08/04/2025", "MERWANE BENLAZAR", "SCENE BARBES", "PARIS", "50", "8", "PERSO", "H"], ["15/04/2025", "YOA", "OLYMPIA", "PARIS", "2800", "9,75", "PERSO", "F"], ["24/05/2025", "DUA LIPA", "DEFENSE ARENA", "PARIS", "45000", "9", "PERSO", "F"], ["04/06/2025", "WALY DIA", "SUMMUM", "GRENOBLE", "4000", "9", "BOULOT", "H"], ["12/06/2025", "LE ROI LYON", "THEATRE MOGADOR", "PARIS", "1600", "9", "PERSO", "H"], ["13/06/2025", "DAVID CASTELLO LOPES", "ZENITH", "PARIS", "6700", "7", "PERSO", "H"], ["08/07/2025", "ARABELLA", "THEATRE DE VERDURE", "AIX-LES-BAINS", "3000", "7", "BOULOT", "H"], ["09/07/2025", "THE LAST DINNER PARTY", "MUSILAC", "AIX-LES-BAINS", "36000", "8", "BOULOT", "F"], ["09/07/2025", "FONTAINES D.C", "MUSILAC", "AIX-LES-BAINS", "36000", "8,5", "BOULOT", "H"], ["10/07/2025", "ADELE CASTILLON", "MUSILAC", "AIX-LES-BAINS", "36000", "7,5", "BOULOT", "F"], ["10/07/2025", "JULIEN DORE", "MUSILAC", "AIX-LES-BAINS", "36000", "6,5", "BOULOT", "H"], ["10/07/2025", "DJ SNAKE", "MUSILAC", "AIX-LES-BAINS", "36000", "7", "BOULOT", "H"], ["11/07/2025", "MEUTE", "MUSILAC", "AIX-LES-BAINS", "36000", "7", "BOULOT", "H"], ["17/07/2025", "MIKI", "CABARET FRAPPE", "GRENOBLE", "10000", "6", "PERSO", "F"], ["22/07/2025", "MACKLEMORE", "PALEO", "RUOMS", "50000", "9", "BOULOT", "H"], ["20/08/2025", "CHAPPELL ROAN", "ROCK EN SEINE", "PARIS", "40000", "9,75", "PERSO", "F"], ["22/08/2025", "AURORA", "ROCK EN SEINE", "PARIS", "40000", "8", "PERSO", "F"], ["23/08/2025", "HOSHI", "V&B FEST", "CHATEAU GONTIER SUR MAYENNE", "35000", "7,5", "BOULOT", "F"], ["23/08/2025", "FONTAINES D.C", "V&B FEST", "CHATEAU GONTIER SUR MAYENNE", "35000", "7", "BOULOT", "H"], ["24/08/2025", "LAST TRAIN", "ROCK EN SEINE", "PARIS", "35000", "7", "PERSO", "H"], ["24/08/2025", "FONTAINES D.C", "ROCK EN SEINE", "PARIS", "35000", "7", "PERSO", "H"], ["06/09/2025", "RILES", "GOLDEN COAST", "DIJON", "30000", "7", "BOULOT", "H"], ["06/09/2025", "GAZO", "GOLDEN COAST", "DIJON", "30000", "6", "BOULOT", "H"], ["06/09/2025", "THEODORA", "GOLDEN COAST", "DIJON", "30000", "9,5", "BOULOT", "F"], ["13/09/2025", "EDDY DE PRETTO", "FETE DE L'HUMANITE", "PLESSIS-PATE", "70000", "7", "PERSO", "H"], ["13/09/2025", "PATTI SMITH", "FETE DE L'HUMANITE", "PLESSIS-PATE", "70000", "7", "PERSO", "F"], ["14/09/2025", "ADELE CASTILLON", "FETE DE L'HUMANITE", "PLESSIS-PATE", "70000", "8,75", "PERSO", "F"], ["14/09/2025", "CAMILLE YEMBE", "FETE DE L'HUMANITE", "PLESSIS-PATE", "70000", "8,5", "PERSO", "F"], ["14/09/2025", "GIMS", "FETE DE L'HUMANITE", "PLESSIS-PATE", "70000", "7", "PERSO", "H"], ["08/10/2025", "HELENE SIO", "CAFE DE LA DANSE", "PARIS", "500", "8", "PERSO", "F"], ["11/10/2025", "BARBARA PRAVI", "THEATRE LE RHONE", "BOURG LES VALENCE", "1250", "7", "BOULOT", "F"], ["31/10/2025", "JOK'AIR", "SUMMUM", "GRENOBLE", "4000", "7", "BOULOT", "H"], ["07/11/2025", "KATY PERRY", "LDLC ARENA", "LYON", "16000", "8", "BOULOT", "F"], ["20/11/2025", "MANON BRIL", "EUROPEEN", "PARIS", "350", "7,5", "PERSO", "F"], ["29/11/2025", "VALD", "DEFENSE ARENA", "PARIS", "45000", "9", "PERSO", "H"], ["04/12/2025", "JULIEN DORE", "PALAIS DES SPORTS", "GRENOBLE", "8000", "7", "BOULOT", "H"], ["06/12/2025", "LEOPOLD LEMARCHAND", "EUROPEEN", "PARIS", "350", "8", "PERSO", "H"], ["11/12/2025", "GOLDMEN", "THEATRE LE RHONE", "BOURG LES VALENCE", "1250", "7,5", "BOULOT", "H"], ["20/12/2025", "GIMS", "DEFENSE ARENA", "PARIS", "45000", "7,5", "PERSO", "H"], ["27/01/2026", "BOB & MOI", "LA SCALA", "PARIS", "180", "8", "PERSO", "H"], ["29/01/2026", "YOA", "SALLE PLEYEL", "PARIS", "2500", "8,5", "PERSO", "F"], ["24/02/2026", "INO CASABLANCA", "CIGALE", "PARIS", "1500", "9,75", "PERSO", "H"], ["25/02/2026", "THE LAST DINNER PARTY", "ZENITH", "PARIS", "6700", "9", "PERSO", "F"], ["26/02/2026", "ORELSAN", "LDLC ARENA", "LYON", "16000", "8,75", "BOULOT", "H"], ["05/03/2026", "MIKE & RIKE", "GRAND POINT VIRGULE", "PARIS", "220", "/", "PERSO", "H"], ["10/03/2026", "INO CASABLANCA", "AMPERAGE", "GRENOBLE", "280", "8", "BOULOT", "H"], ["12/03/2026", "CLEMENT VIKTOROVICH", "AUDITORIUM", "GRENOBLE", "1500", "6", "BOULOT", "H"], ["13/03/2026", "MADAME ARTHUR", "THEATRE LE RHONE", "BOURG LES VALENCE", "1250", "7,5", "BOULOT", "MIXTE"], ["30/03/2026", "THEODORA", "ZENITH", "PARIS", "6700", "7,5", "PERSO", "F"], ["07/04/2026", "TOM BALDETTI", "AUDITORIUM", "GRENOBLE", "1500", "6", "BOULOT", "H"], ["15/04/2026", "LOUIS TOMLINSON", "LDLC ARENA", "LYON", "16000", "8", "PERSO", "H"], ["30/05/2026", "AYA NAKAMURA", "STADE DE FRANCE", "PARIS", "80000", "8", "PERSO", "F"], ["09/07/2026", "KATY PERRY", "MUSILAC", "AIX-LES-BAINS", "36000", "8,5", "BOULOT", "F"], ["10/07/2026", "ORELSAN", "MUSILAC", "AIX-LES-BAINS", "36000", "8", "BOULOT", "H"], ["11/07/2026", "JAMIROQUAI", "MUSILAC", "AIX-LES-BAINS", "36000", "8", "BOULOT", "H"], ["11/07/2026", "GORILLAZ", "MUSILAC", "AIX-LES-BAINS", "36000", "9", "BOULOT", "H"], ["12/07/2026", "SOLANN", "MUSILAC", "AIX-LES-BAINS", "36000", "8,5", "BOULOT", "F"], ["12/07/2026", "DANYL", "MUSILAC", "AIX-LES-BAINS", "36000", "8,5", "BOULOT", "H"], ["12/07/2026", "BIGFLO & OLI", "MUSILAC", "AIX-LES-BAINS", "36000", "8", "BOULOT", "H"], ["28/08/2026", "KINFFISHR", "ROCK EN SEINE", "PARIS", "40000", "7", "BOULOT", "H"], ["28/08/2026", "WET LEG", "ROCK EN SEINE", "PARIS", "40000", "6", "BOULOT", "F"], ["05/09/2026", "PLK", "STADE DE FRANCE", "PARIS", "80000", "8,75", "PERSO", "H"], ["09/09/2026", "KATSEYE", "ACCOR ARENA", "PARIS", "20000", "7", "PERSO", "F"], ["11/09/2026", "INO CASABLANCA", "FETE DE L'HUMANITE", "PLESSIS-PATE", "70000", "8", "PERSO", "H"], ["11/09/2026", "DANYL", "FETE DE L'HUMANITE", "PLESSIS-PATE", "70000", "8,5", "PERSO", "H"], ["18/09/2026", "CELINE DION", "DEFENSE ARENA", "PARIS", "45000", "9,75", "PERSO", "F"], ["29/10/2026", "MACKLEMORE", "ACCOR ARENA", "PARIS", "20000", "", "PERSO", "H"], ["12/11/2026", "MIKI", "106", "ROUEN", "1100", "", "PERSO", "F"], ["19/11/2026", "DANYL", "ZENITH", "PARIS", "6700", "", "PERSO", "H"]];
+const PROCHAIN = {artiste:"Tame Impala", date:"Mai 2027", lieu:"À venir"};
+const MOT_FIN = "En 2027, il y aura Tame Impala. Et on y sera ensemble.";
+const FESTIVALS = ["MUSILAC","ROCK EN SEINE","WE LOVE GREEN","FETE DE L'HUMANITE","MARSATAC","REGGAE SUN SKA","ROSE FESTIVAL","V&B FEST","GOLDEN COAST","PALEO","CABARET FRAPPE"];
+const COORDS = {"PARIS":[48.857,2.352],"GRENOBLE":[45.188,5.724],"AIX-LES-BAINS":[45.688,5.915],"LYON":[45.764,4.835],"BOURG LES VALENCE":[44.947,4.894],
+  "MARSEILLE":[43.296,5.370],"DIJON":[47.322,5.041],"PLESSIS-PATE":[48.611,2.326],"TOULOUSE":[43.605,1.444],"CHATEAU GONTIER SUR MAYENNE":[47.829,-0.703],
+  "CHATEAURENARD":[43.882,4.854],"BORDEAUX":[44.838,-0.579],"LISIEUX":[49.146,0.226],"ROUEN":[49.443,1.099],"RUOMS":[44.454,4.341],"VIENNE":[45.525,4.874],
+  "VOIRON":[45.364,5.589],"VENISE":[45.440,12.316],"LONDRES":[51.507,-0.128]};
+/* ===================================================== */
+
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const MOIS = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+const FIX = {"SCH":"SCH","PNL":"PNL","PLK":"PLK","IDLES":"IDLES","M":"-M-","FONTAINES D.C":"Fontaines D.C.","FETE DE L'HUMANITE":"Fête de l'Huma","ZENITH":"Zénith",
+  "THEATRE LE RHONE":"Théâtre le Rhône","MYLENE FARMER":"Mylène Farmer","CELINE DION":"Céline Dion","ANGELE":"Angèle","HERVE":"Hervé","SCENE BARBES":"Scène Barbès",
+  "EUROPEEN":"L'Européen","ELYSEE MONTMARTRE":"Élysée Montmartre","BIGFLO & OLI":"Bigflo & Oli","LANA DEL REY":"Lana Del Rey","PLESSIS-PATE":"Plessis-Pâté",
+  "AIX-LES-BAINS":"Aix-les-Bains","CHATEAU GONTIER SUR MAYENNE":"Château-Gontier","BOURG LES VALENCE":"Bourg-lès-Valence","CHATEAURENARD":"Châteaurenard",
+  "LES PASSAGERS DU ZINC":"Les Passagers du Zinc","V&B FEST":"V and B Fest","MERWANE BENLAZAR":"Merwane Benlazar","LDLC ARENA":"LDLC Arena","PALEO":"Paléo"};
+const SMALL = new Set(["de","du","des","en","la","le","les","et","d","l"]);
+const nice = s => FIX[s] || s.toLowerCase().split(/(\s+|-)/).map((w,i) => (i && SMALL.has(w)) ? w : w.charAt(0).toUpperCase() + w.slice(1)).join("");
+const fmt = n => n.toLocaleString("fr-FR");
+const dec = n => String(n).replace(".", ",");
+
+/* ---------- calculs ---------- */
+const rows = DATA.map(([d,a,l,v,c,n,ca,g]) => { const [dd,mm,yy] = d.split("/").map(Number);
+  return {ds:d, d:new Date(yy,mm-1,dd), y:yy, m:mm, a:a.trim(), l:l.trim(), v:v.trim(), c:+c || 0, n: n && n !== "/" ? parseFloat(n.replace(",",".")) : null, ca, g}; })
+  .sort((x,y) => x.d - y.d);
+const tally = f => { const m = new Map(); rows.forEach(r => { const k = f(r); m.set(k, (m.get(k)||0)+1); }); return [...m].sort((a,b) => b[1]-a[1]); };
+const total = rows.length, artistes = tally(r => r.a), lieux = tally(r => r.l), villes = tally(r => r.v), soirs = tally(r => r.ds), moisT = tally(r => r.m);
+const first = rows[0], y0 = first.y, y1 = rows[rows.length-1].y;
+const years = {}; rows.forEach(r => years[r.y] = (years[r.y]||0)+1);
+const bestYear = Object.entries(years).sort((a,b) => b[1]-a[1])[0];
+const noted = rows.filter(r => r.n !== null), avg = noted.reduce((s,r) => s+r.n, 0) / noted.length;
+const maxNote = Math.max(...noted.map(r => r.n)), topNotes = noted.filter(r => r.n === maxNote);
+const minNote = Math.min(...noted.map(r => r.n)), lowNotes = noted.filter(r => r.n === minNote);
+const withCap = rows.filter(r => r.c > 0), biggest = Math.max(...withCap.map(r => r.c)), smallest = Math.min(...withCap.map(r => r.c));
+const bigRows = withCap.filter(r => r.c === biggest), smallRow = withCap.find(r => r.c === smallest);
+const crowd = withCap.reduce((s,r) => s + r.c, 0);
+const perso = rows.filter(r => r.ca === "PERSO").length, boulot = rows.filter(r => r.ca === "BOULOT").length;
+const fem = rows.filter(r => r.g === "F").length, hom = rows.filter(r => r.g === "H").length;
+const fest = rows.filter(r => FESTIVALS.includes(r.l)).length, ete = rows.filter(r => r.m >= 6 && r.m <= 8).length;
+const dateFr = d => `${d.getDate() === 1 ? "1er" : d.getDate()} ${MOIS[d.getMonth()]} ${d.getFullYear()}`;
+const topA = artistes.filter(x => x[1] >= 3);
+const busiest = soirs[0], busyRows = rows.filter(r => r.ds === busiest[0]);
+// la plus longue fidélité : même artiste, premier et dernier concert les plus éloignés
+const byA = {}; rows.forEach(r => (byA[r.a] = byA[r.a] || []).push(r));
+const loyal = Object.values(byA).filter(v => v.length > 1).map(v => ({a:v[0].a, f:v[0], l:v[v.length-1], gap:v[v.length-1].y - v[0].y})).sort((a,b) => b.gap - a.gap)[0];
+const s = n => n > 1 ? "s" : "";
+
+/* ---------- petits visuels ---------- */
+const blobs = (c1, c2, c3) => `<div class="bg"><span class="blob" style="width:70%;height:50%;left:-5%;top:5%;background:${c1}"></span><span class="blob" style="width:60%;height:45%;right:-5%;top:40%;background:${c2};--mx:-50px;--my:40px;animation-duration:17s"></span><span class="blob" style="width:55%;height:40%;left:20%;bottom:-5%;background:${c3};--mx:30px;--my:-30px;animation-duration:20s"></span></div>`;
+const BG = {pine:blobs("#2f5c4e","#0a1915","#4b6a3c"), berry:blobs("#b14453","#5a1520","#d47a63"), gold:blobs("#f4e1a7","#c79a45","#fff1c9"),
+  frost:blobs("#e7f4f8","#8fb6c7","#c6dde6"), night:blobs("#21443a","#020504","#4a3417"), paper:blobs("#fbf4e4","#ead9b6","#f6ead0")};
+const beams = `<div class="beams"><i></i><i></i><i></i></div>`;
+
+function mapSVG(){
+  const W = 300, H = 300, pad = 10;
+  const pts = villes.map(([v,n]) => ({v, n, ll: COORDS[v]})).filter(p => p.ll);
+  const lat0 = 47, k = Math.cos(lat0*Math.PI/180);
+  const xs = pts.map(p => p.ll[1]*k), ys = pts.map(p => p.ll[0]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const sc = Math.min((W-2*pad)/(maxX-minX), (H-2*pad)/(maxY-minY));
+  const ox = (W - (maxX-minX)*sc)/2, oy = (H - (maxY-minY)*sc)/2;
+  const P = ll => [ox + (ll[1]*k - minX)*sc, oy + (maxY - ll[0])*sc];
+  const maxN = pts[0].n, rMax = 30;
+  let grat = "";
+  for (let lo = -2; lo <= 14; lo += 2){ const [x] = P([0,lo]); if (x > 0 && x < W) grat += `<line class="grat" x1="${x}" y1="0" x2="${x}" y2="${H}"/>`; }
+  for (let la = 43; la <= 52; la += 1){ const [,y] = P([la,0]); if (y > 0 && y < H) grat += `<line class="grat" x1="0" y1="${y}" x2="${W}" y2="${y}"/>`; }
+  const sorted = pts.slice().sort((a,b) => b.n - a.n);
+  const circles = sorted.map((p,i) => { const [x,y] = P(p.ll), r = Math.max(2.4, rMax*Math.sqrt(p.n/maxN));
+    return `<circle class="sym" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}" style="--d:${(.3 + i*.07).toFixed(2)}"/>`; }).join("");
+  const labels = sorted.filter(p => p === sorted[0] || ["VENISE","LONDRES","MARSEILLE","TOULOUSE","BORDEAUX","ROUEN"].includes(p.v)).map(p => { const [x,y] = P(p.ll), r = Math.max(2.4, rMax*Math.sqrt(p.n/maxN));
+    const right = x < W*.7; return `<text x="${(x + (right ? r+4 : -r-4)).toFixed(1)}" y="${(y+3).toFixed(1)}" text-anchor="${right ? "start" : "end"}">${esc(nice(p.v))} · ${p.n}</text>`; }).join("");
+  // légende des cercles proportionnels
+  const lg = [maxN, Math.round(maxN/4), 1].map((n,i) => { const r = rMax*Math.sqrt(n/maxN); return `<circle cx="${W-36}" cy="${H-6-r}" r="${r}" fill="none" stroke="currentColor" stroke-opacity=".5"/><text class="cap" x="${W-36+rMax+4}" y="${H-6-2*r+3}">${n}</text>`; }).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Carte des villes de concert">${grat}${circles}${labels}${lg}<text class="cap" x="2" y="${H-4}">Cercles proportionnels au nombre de concerts</text></svg>`;
+}
+function crowdDots(){ let h = ""; for (let i=0;i<200;i++) h += `<i style="--d:${(.3 + i*.006).toFixed(3)}"></i>`; return h; }
+
+const STAR = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5l2.6 6 6.4.6-4.9 4.2 1.5 6.3L12 16.3l-5.6 3.3 1.5-6.3L3 9.1l6.4-.6z"/></svg>';
+const isLac = lieux[0][0] === "MUSILAC";
+const profil = isLac && fest/total > .3 ? "La festivalière du lac" : fest/total > .4 ? "La festivalière" : "L'habituée des salles";
+
+/* ---------- cartes ---------- */
+const SLIDES = [
+  {t:"night", dur:6, html:`${beams}<div class="eq k" style="--d:.1">${Array.from({length:9},(_,i) => `<i style="--i:${i}"></i>`).join("")}</div>
+    <div class="eyebrow k" style="--d:.3">${y0} → ${y1}</div><h1 class="k" style="--d:.5">${PRENOM},<br><em>sur scène</em></h1>
+    <p class="muted k" style="--d:.9">Quinze ans de concerts, de festivals et de soirées debout dans la fosse. Voici ton bilan.</p>
+    <div class="choice k" style="--d:1.2"><button class="main" type="button" data-sound="1">Avec le son</button><button type="button" data-sound="0">Sans le son</button></div>`},
+  {t:"pine", quiz:{answer:total, options:[Math.round(total*.68), total, Math.round(total*1.31)]}, dur:7,
+    html:`<div class="ask"><div class="eyebrow k">Question</div><h2 class="k" style="--d:.2">À ton avis, combien de concerts depuis ${y0} ?</h2><div class="quiz k" style="--d:.5"></div></div>
+    <div class="reveal"><div class="eyebrow">Au total</div><div class="big" data-count="${total}">${total}</div><h2>concerts <em>et spectacles</em></h2>
+    <div class="row3"><div><b data-count="${artistes.length}">${artistes.length}</b><span>artistes</span></div><div><b data-count="${soirs.length}">${soirs.length}</b><span>soirées</span></div><div><b data-count="${villes.length}">${villes.length}</b><span>villes</span></div></div></div>`},
+  {t:"berry", dur:7, html:`<div class="eyebrow k">La toute première fois</div>
+    <div class="ticket k" style="--d:.3"><div class="main"><small>Entrée · ${esc(nice(first.l))}</small><b>${esc(nice(first.a))}</b><span>${dateFr(first.d)}</span><span style="opacity:.65">${esc(nice(first.v))}</span></div>
+    <div class="stub">Admis · n° 001</div><div class="stamp">Vu</div></div>
+    <p class="k" style="--d:1;margin-top:16px">Ton tout premier concert. Le début d'une longue série.</p>`},
+  {t:"pine", dur:8, html:`<div class="eyebrow k">Ton année record</div><div class="big k" style="--d:.2" data-count="${bestYear[1]}">${bestYear[1]}</div>
+    <h2 class="k" style="--d:.35">concerts en <em>${bestYear[0]}</em></h2><p class="muted k" style="--d:.5">Presque un par semaine.${years[y1] && +bestYear[0] !== y1 ? ` Et déjà ${years[y1]} en ${y1}.` : ""}</p>
+    <div class="chart k" style="--d:.4">${Array.from({length:y1-y0+1},(_,i) => { const y = y0+i, v = years[y]||0; return `<div class="${+bestYear[0]===y?"hi":""}"><em>${+bestYear[0]===y?v:""}</em><i data-h="${v}"></i><span>${y}</span></div>`; }).join("")}</div>`},
+  {t:"night", dur:6, html:`${beams}<div class="eyebrow k">Ta plus grosse soirée</div><div class="big k" style="--d:.2">${busiest[1]}<small> artistes</small></div>
+    <h2 class="k" style="--d:.4">en une seule nuit</h2>
+    <p class="k" style="--d:.6">${dateFr(busyRows[0].d)}, ${esc(nice(busyRows[0].l))} : ${busyRows.map(r => esc(nice(r.a))).join(", ")}.</p>`},
+  {t:"berry", dur:7, html:`<div class="eyebrow k">Ton lieu fétiche</div>
+    <div class="band"><span>Accès</span><b>${esc(nice(lieux[0][0]))}</b><span>×${lieux[0][1]}</span></div>
+    <h2 class="k" style="--d:.6">${lieux[0][1]} concerts au même endroit${isLac ? ", <em>au bord du lac</em>" : ""}</h2>
+    <ol class="list k" style="--d:.9">${lieux.slice(1,4).map(x => `<li><b>${x[1]}</b><span>${esc(nice(x[0]))}</span></li>`).join("")}</ol>`},
+  {t:"frost", dur:9, html:`<div class="eyebrow k">Ta carte des concerts</div><h2 class="k" style="--d:.15">${villes.length} villes, <em>${esc(nice(villes[0][0]))}</em> en tête</h2>
+    <div class="map k" style="--d:.2">${mapSVG()}</div>
+    <p class="k" style="--d:1.6;font-size:14.5px">Puis ${villes.slice(1,4).map(x => `${esc(nice(x[0]))} (${x[1]})`).join(", ")}. Les plus lointains : Venise et Londres.</p>`},
+  {t:"night", dur:8, html:`<div class="eyebrow k">Tes artistes les plus vus</div>
+    <div class="vinyl k" style="--d:.2"><div class="label">${esc(nice(artistes[0][0]))}<br>&amp;<br>${esc(nice(artistes[1][0]))}</div></div>
+    <h2 class="k" style="--d:.5"><em>${artistes[0][1]} fois</em> chacun</h2>
+    <ol class="list k" style="--d:.8">${topA.slice(2,7).map(x => `<li><b>${x[1]}</b><span>${esc(nice(x[0]))}</span></li>`).join("")}</ol>`},
+  {t:"gold", dur:7, html:`<div class="eyebrow k">La plus longue histoire</div><div class="big k" style="--d:.2">${loyal.gap}<small> ans</small></div>
+    <h2 class="k" style="--d:.4">avec ${esc(nice(loyal.a))}</h2>
+    <p class="k" style="--d:.6">De ${esc(nice(loyal.f.l))} en ${loyal.f.y}${loyal.f.c ? ` (${fmt(loyal.f.c)} places)` : ""} à ${esc(nice(loyal.l.l))} en ${loyal.l.y}${loyal.l.c ? ` (${fmt(loyal.l.c)} places)` : ""}. Vous avez grandi ensemble.</p>`},
+  {t:"night", dur:9, html:`${beams}<div class="eyebrow k">Le club des ${dec(maxNote)}</div><h2 class="k" style="--d:.2">Tes plus belles <em>soirées</em></h2>
+    <ol class="list">${topNotes.map((r,i) => `<li class="k" style="--d:${(.4+i*.18).toFixed(2)}"><span>${esc(nice(r.a))}</span><small>${esc(nice(r.l))}, ${r.y}</small></li>`).join("")}</ol>
+    <p class="muted k" style="--d:1.6;margin-top:6px">Ta note moyenne : ${dec(avg.toFixed(1))} sur 10. Exigeante, mais juste.</p>`},
+  {t:"berry", dur:6, html:`<div class="eyebrow k">Les déceptions</div><div class="big outline k" style="--d:.2">${dec(minNote)}<small>/10</small></div>
+    <h2 class="k" style="--d:.4">${lowNotes.map(r => esc(nice(r.a))).join(" et ")}</h2><p class="muted k" style="--d:.6">On ne leur en veut pas. Enfin, un peu.</p>`},
+  {t:"pine", dur:8, html:`<div class="eyebrow k">Du plus grand au plus petit</div><h2 class="k" style="--d:.15">Tout est une question <em>d'échelle</em></h2>
+    <div class="scale k" style="--d:.2">
+      <div><span class="c" style="width:170px;height:170px"></span><b data-count="${biggest}">${fmt(biggest)}</b><small>${esc(nice(bigRows[0].l))}</small></div>
+      <div><span class="c" style="width:${Math.max(3, 170*Math.sqrt(smallest/biggest)).toFixed(1)}px;height:${Math.max(3, 170*Math.sqrt(smallest/biggest)).toFixed(1)}px"></span><b>${smallest}</b><small>${esc(nice(smallRow.l))}</small></div>
+    </div>
+    <p class="muted k" style="--d:1.2">Les deux cercles sont à la même échelle. Oui, le petit point, ce sont les ${smallest} places de ${esc(nice(smallRow.a))}.</p>`},
+  {t:"frost", dur:7, html:`<div class="eyebrow k">Une foule immense</div><div class="big k" style="--d:.2;font-size:clamp(60px,19vw,92px)" data-count="${crowd}">${fmt(crowd)}</div>
+    <h2 class="k" style="--d:.4">personnes</h2><div class="crowd k" style="--d:.3">${crowdDots()}</div>
+    <p class="k" style="--d:.8">Le total des places des salles où tu étais. Plus que toute la population de Paris.</p>`},
+  {t:"gold", dur:7, html:`<div class="eyebrow k">Ta saison</div><h2 class="k" style="--d:.15">L'été, <em>forcément</em></h2>
+    <svg class="donut k" style="--d:.3" viewBox="0 0 42 42"><circle cx="21" cy="21" r="15.9" stroke="rgba(31,23,8,.18)"/><circle cx="21" cy="21" r="15.9" stroke="#1f1708" stroke-dasharray="0 100" data-dash="${(ete/total*100).toFixed(1)}" transform="rotate(-90 21 21)" style="transition:stroke-dasharray 1.2s cubic-bezier(.2,.8,.2,1)"/><text x="21" y="24" text-anchor="middle" font-size="8" font-family="Bodoni Moda" font-weight="600" fill="#1f1708">${Math.round(ete/total*100)} %</text></svg>
+    <p class="k" style="--d:.5">de tes concerts entre juin et août. Ton mois préféré : ${MOIS[moisT[0][0]-1]}, avec ${moisT[0][1]} concerts.</p>
+    <p class="muted k" style="--d:.7">${fest} concerts en festival, ${total - fest} en salle.</p>`},
+  {t:"pine", dur:7, html:`<div class="eyebrow k">Côté coulisses</div><h2 class="k" style="--d:.15">Perso <em>ou</em> boulot ?</h2>
+    <div class="split k" style="--d:.3"><i style="background:var(--gold-hi)" data-w="${perso/total*100}"></i><i style="background:var(--frost)" data-w="${boulot/total*100}"></i></div>
+    <div class="legend k" style="--d:.3"><span>${perso} pour le plaisir</span><span>${boulot} pour le travail</span></div>
+    <h2 class="k" style="--d:.6;margin-top:20px">Sur scène</h2>
+    <div class="split k" style="--d:.7"><i style="background:var(--rose)" data-w="${fem/total*100}"></i><i style="background:rgba(239,233,220,.6)" data-w="${hom/total*100}"></i></div>
+    <div class="legend k" style="--d:.7"><span>${fem} artistes femmes</span><span>${hom} hommes</span></div>`},
+  {t:"paper", dur:8, html:`<div class="eyebrow k">Ton profil</div><div class="badge k" style="--d:.2">${STAR}</div>
+    <h2 class="k" style="--d:.4">${profil}</h2>
+    <div class="traits k" style="--d:.6">
+      <div><span>Fidèle</span><b>${esc(nice(lieux[0][0]))} ×${lieux[0][1]}</b></div>
+      <div><span>Insatiable</span><b>${bestYear[1]} concerts en ${bestYear[0]}</b></div>
+      <div><span>Exigeante</span><b>${dec(avg.toFixed(1))} de moyenne</b></div>
+      <div><span>Noctambule</span><b>${busiest[1]} artistes en une nuit</b></div></div>`},
+  {t:"berry", dur:9, html:`<div class="eyebrow k">Ton récap</div>
+    <div class="poster k" style="--d:.2"><h3>${PRENOM}, sur scène</h3>
+      <div class="g"><div><small>Concerts</small><b>${total}</b></div><div><small>Artistes</small><b>${artistes.length}</b></div>
+      <div><small>Lieu fétiche</small><b>${esc(nice(lieux[0][0]))}</b></div><div><small>Année record</small><b>${bestYear[0]}</b></div>
+      <div><small>Les plus vus</small><b>${esc(nice(artistes[0][0]))}, ${esc(nice(artistes[1][0]))}</b></div><div><small>Ville</small><b>${esc(nice(villes[0][0]))}</b></div>
+      <div><small>Note moyenne</small><b>${dec(avg.toFixed(1))}/10</b></div><div><small>Profil</small><b>${profil}</b></div></div>
+      <div class="foot"><span>${y0} – ${y1}</span><span>2027 : ${esc(PROCHAIN.artiste)}, ensemble</span></div></div>
+    <p class="muted k" style="--d:.8;font-size:13px">Fais une capture, elle est à toi.</p>`},
+  {t:"night", dur:0, html:`${beams}<div class="eyebrow k">${total} concerts plus tard</div><h1 class="k" style="--d:.3">${esc(MOT_FIN)}</h1>
+    <div class="end-actions k" style="--d:1"><button class="btn" id="again" type="button">Revoir</button><a class="btn main" href="index.html">Revenir au calendrier</a></div>`},
+];
+
+/* ---------- lecture ---------- */
+$("slides").innerHTML = SLIDES.map((sl,i) => `<section class="slide t-${sl.t}" data-i="${i}" aria-hidden="true">${BG[sl.t]}${sl.html}${i===0?'<div class="tap">Touche pour avancer</div>':""}</section>`).join("");
+$("bars").innerHTML = SLIDES.map(() => "<i><b></b></i>").join("");
+const slides = [...document.querySelectorAll(".slide")], bars = [...document.querySelectorAll(".bars i")];
+let cur = -1, timer = null;
+
+// quiz
+SLIDES.forEach((sl,i) => { if (!sl.quiz) return;
+  const box = slides[i].querySelector(".quiz");
+  box.innerHTML = sl.quiz.options.map(o => `<button type="button" data-v="${o}">${o}</button>`).join("");
+  box.addEventListener("click", e => { const b = e.target.closest("button"); if (!b || slides[i].dataset.answered) return; e.stopPropagation();
+    slides[i].dataset.answered = 1;
+    box.querySelectorAll("button").forEach(x => x.classList.add(+x.dataset.v === sl.quiz.answer ? "good" : "bad"));
+    setTimeout(() => { slides[i].classList.add("revealed"); animateIn(slides[i]); start(i, 6); }, 900);
+  });
+});
+
+function countUp(el){
+  const target = +el.dataset.count; if (reduce || !target) return;
+  const t0 = performance.now(), dur = 1200;
+  (function step(now){ const p = Math.min(1, (now-t0)/dur), v = Math.round(target * (1 - Math.pow(1-p, 3)));
+    el.textContent = target >= 10000 ? fmt(v) : v; if (p < 1) requestAnimationFrame(step); })(t0);
+}
+function animateIn(el){
+  el.querySelectorAll("[data-count]").forEach(x => { if (x.offsetParent !== null) countUp(x); });
+  const maxY = Math.max(...Object.values(years));
+  el.querySelectorAll(".chart i").forEach(x => x.style.height = "0");
+  el.querySelectorAll(".split i").forEach(x => x.style.width = "0");
+  el.querySelectorAll("[data-dash]").forEach(x => x.setAttribute("stroke-dasharray","0 100"));
+  setTimeout(() => {
+    el.querySelectorAll(".chart i").forEach(x => x.style.height = (x.dataset.h / maxY * 100) + "%");
+    el.querySelectorAll(".split i").forEach(x => x.style.width = x.dataset.w + "%");
+    el.querySelectorAll("[data-dash]").forEach(x => x.setAttribute("stroke-dasharray", `${x.dataset.dash} ${100 - x.dataset.dash}`));
+  }, 450);
+}
+function start(i, d){
+  const b = bars[i]; b.className = ""; void b.offsetWidth; b.style.setProperty("--dur", d + "s"); b.className = "cur";
+  clearTimeout(timer); timer = setTimeout(() => show(i+1), d*1000);
+}
+function show(i){
+  if (i < 0) i = 0; if (i >= slides.length) return;
+  cur = i; clearTimeout(timer);
+  slides.forEach((sl,k) => { sl.classList.toggle("on", k === i); sl.setAttribute("aria-hidden", k !== i);
+    if (k === i){ sl.querySelectorAll(".k, .stamp, .band, .vinyl").forEach(x => { x.style.animation = "none"; void x.offsetWidth; x.style.animation = ""; }); } });
+  bars.forEach((b,k) => { b.className = k < i ? "done" : ""; });
+  const sl = SLIDES[i], el = slides[i];
+  if (typeof Music !== "undefined") Music.playFor(i);
+  if (sl.quiz && !el.dataset.answered){ bars[i].className = "cur"; bars[i].style.setProperty("--dur","9999s"); return; }
+  animateIn(el);
+  if (sl.dur) start(i, sl.dur); else { bars[i].className = "done"; confetti(); }
+}
+$("next").addEventListener("click", () => { if (SLIDES[cur].quiz && !slides[cur].dataset.answered) return; if (cur < slides.length-1) show(cur+1); });
+$("prev").addEventListener("click", () => show(cur-1));
+document.addEventListener("keydown", e => { if (e.key === "ArrowRight" || e.key === " "){ e.preventDefault(); $("next").click(); } if (e.key === "ArrowLeft") show(cur-1); });
+// garder le doigt appuyé = pause
+let holdT; const frame = $("frame");
+frame.addEventListener("pointerdown", e => { if (e.target.closest(".quiz, .end-actions, .close, .choice, .sound")) return; holdT = setTimeout(() => { clearTimeout(timer); $("bars").classList.add("paused"); frame.dataset.paused = 1; Music.pause(); }, 280); });
+addEventListener("pointerup", () => { clearTimeout(holdT); if (frame.dataset.paused){ delete frame.dataset.paused; $("bars").classList.remove("paused"); Music.resume(); if (SLIDES[cur].dur) timer = setTimeout(() => show(cur+1), 1800); } });
+document.addEventListener("click", e => { if (e.target.id === "again"){ e.stopPropagation(); slides.forEach(x => { delete x.dataset.answered; x.classList.remove("revealed"); x.querySelectorAll(".quiz button").forEach(b => b.className = ""); }); show(0); } });
+// les boutons passent devant les zones de tap
+["quiz","end-actions"].forEach(c => document.querySelectorAll("." + c).forEach(el => { el.style.zIndex = 6; }));
+
+function confetti(){
+  if (reduce) return;
+  const c = $("confetti"), x = c.getContext("2d"), d = Math.min(2, devicePixelRatio||1), w = innerWidth, h = innerHeight;
+  c.width = w*d; c.height = h*d; c.style.width = w+"px"; c.style.height = h+"px"; x.setTransform(d,0,0,d,0,0);
+  const cols = ["#e9c96f","#ecd9a6","#a9c8d9","#d9a7b8","#f2ece0","#a3424e","#a9c79f"]; let parts = [];
+  const piece = (px,py,a,sp) => ({x:px,y:py,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,g:.16+Math.random()*.08,w:5+Math.random()*6,h:8+Math.random()*8,r:Math.random()*6,vr:(Math.random()-.5)*.35,t:Math.random()*6,c:cols[(Math.random()*cols.length)|0],life:0});
+  for (let i=0;i<200;i++){ const s2 = i%2 ? 1 : -1; parts.push(piece(s2>0?-10:w+10, h*.75, s2>0 ? -Math.PI/3-Math.random()*.5 : -2*Math.PI/3+Math.random()*.5, 9+Math.random()*10)); }
+  for (let i=0;i<100;i++) parts.push(piece(Math.random()*w, -20-Math.random()*h*.5, Math.PI/2, 1+Math.random()*2));
+  (function tick(){ x.clearRect(0,0,w,h); parts = parts.filter(p => p.y < h+30 && p.life < 600);
+    for (const p of parts){ p.life++; p.vx *= .99; p.vy = p.vy*.99 + p.g; p.x += p.vx + Math.sin(p.t += .08)*.6; p.y += p.vy; p.r += p.vr;
+      x.save(); x.translate(p.x,p.y); x.rotate(p.r); x.scale(1,Math.cos(p.t)); x.fillStyle = p.c; x.fillRect(-p.w/2,-p.h/2,p.w,p.h); x.restore(); }
+    if (parts.length) requestAnimationFrame(tick); })();
+}
+/* ---------- musique : extraits de 30 s (iTunes) ----------
+   Une recherche par carte ; null = la musique précédente continue. */
+const SONGS = [null, "Arctic Monkeys|Do I Wanna Know", "Sinsemilia|Tout le bonheur du monde", "Chappell Roan|Pink Pony Club", null,
+  "Macklemore|Can't Hold Us", "Stromae|Alors on danse", "Orelsan|Basique", "Bigflo & Oli|Dommage", "Yoa|",
+  "Lana Del Rey|Summertime Sadness", "Mylène Farmer|Désenchantée", "Taylor Swift|Shake It Off", "Aurora|Runaway",
+  "Angèle|Balance ton quoi", "Theodora|", "Céline Dion|Pour que tu m'aimes encore", "Tame Impala|The Less I Know The Better"];
+const SOUND_ON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+const SOUND_OFF = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>';
+const Music = (function(){
+  let enabled = false, cache = {}, player = null, curTerm = null, fadeT = null, paused = false;
+  const np = $("np"), btn = $("sound");
+  btn.innerHTML = SOUND_OFF;
+  const simp = x => (x||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+  function jsonp(term){
+    return new Promise(res => {
+      const cb = "it" + Math.random().toString(36).slice(2), sc = document.createElement("script");
+      let fin = false; const done = v => { if (fin) return; fin = true; res(v); delete window[cb]; sc.remove(); };
+      window[cb] = d => done((d && d.results) || []);
+      sc.onerror = () => done([]); setTimeout(() => done([]), 5000);
+      sc.src = `https://itunes.apple.com/search?term=${encodeURIComponent(term)}&entity=song&limit=15&country=FR&callback=${cb}`;
+      document.head.appendChild(sc);
+    });
+  }
+  // "Artiste|Titre" : on garde le premier résultat du bon artiste (et du bon titre s'il est donné)
+  function lookup(key){
+    if (cache[key]) return cache[key];
+    const [artist, title] = key.split("|");
+    cache[key] = (async () => {
+      const pick = list => list.find(x => x.previewUrl && simp(x.artistName).includes(simp(artist)) && (!title || simp(x.trackName).includes(simp(title))))
+                        || list.find(x => x.previewUrl && simp(x.artistName).includes(simp(artist)));
+      let r = pick(await jsonp(`${artist} ${title || ""}`.trim()));
+      if (!r && title) r = pick(await jsonp(artist));
+      return r ? {url:r.previewUrl, title:r.trackName, artist:r.artistName, art:(r.artworkUrl100||"").replace("100x100","200x200")} : null;
+    })();
+    return cache[key];
+  }
+  function fade(a, to, ms, then){
+    const from = a.volume, t0 = performance.now();
+    (function step(now){ const p = Math.min(1, (now-t0)/ms); a.volume = Math.max(0, Math.min(1, from + (to-from)*p)); if (p < 1) requestAnimationFrame(step); else then && then(); })(t0);
+  }
+  function showNP(info){
+    if (!info){ np.classList.remove("on"); return; }
+    np.innerHTML = `${info.art ? `<img src="${info.art}" alt="">` : ""}<div class="txt"><b>${esc(info.title)}</b><span>${esc(info.artist)}</span></div><div class="wave">${[0,1,2,3].map(i => `<i style="--i:${i}"></i>`).join("")}</div>`;
+    np.classList.add("on");
+  }
+  async function playFor(i){
+    let k = i; while (k >= 0 && SONGS[k] === null) k--;
+    const term = k >= 0 ? SONGS[k] : null;
+    if (!enabled || !term){ if (!term && player) stop(); return; }
+    if (term === curTerm && player){ if (paused) resume(); return; }
+    curTerm = term;
+    const info = await lookup(term);
+    if (curTerm !== term || !enabled) return;
+    if (!info){ showNP(null); return; }
+    const old = player; if (old) fade(old, 0, 600, () => old.pause());
+    const a = new Audio(info.url); a.volume = 0; a.loop = true; player = a;
+    a.play().then(() => { fade(a, .75, 900); showNP(info); }).catch(() => showNP(null));
+  }
+  function stop(){ curTerm = null; if (player){ const a = player; fade(a, 0, 500, () => a.pause()); player = null; } showNP(null); }
+  function pause(){ if (player && !paused){ paused = true; player.pause(); np.classList.add("paused"); } }
+  function resume(){ if (player && paused){ paused = false; player.play().catch(() => {}); np.classList.remove("paused"); } }
+  function set(on){ enabled = on; btn.innerHTML = on ? SOUND_ON : SOUND_OFF; btn.setAttribute("aria-pressed", on); btn.setAttribute("aria-label", on ? "Couper le son" : "Activer le son");
+    if (on){ curTerm = null; playFor(cur); } else stop(); }
+  // précharge les recherches pendant qu'elle lit
+  function warm(){ SONGS.filter(Boolean).forEach(lookup); }
+  btn.addEventListener("click", e => { e.stopPropagation(); set(!enabled); if (enabled) warm(); });
+  document.addEventListener("visibilitychange", () => document.hidden ? pause() : resume());
+  return {playFor, set, pause, resume, warm, get on(){ return enabled; }};
+})();
+document.addEventListener("click", e => { const b = e.target.closest("[data-sound]"); if (!b) return; e.stopPropagation();
+  Music.set(b.dataset.sound === "1"); if (Music.on) Music.warm(); b.parentElement.querySelectorAll("button").forEach(x => x.disabled = true); show(1); });
+
+show(0);
+</script>
+
+</body>
+</html>

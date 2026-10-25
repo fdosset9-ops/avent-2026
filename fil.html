@@ -130,7 +130,7 @@ const GRILLES = {
     filDor: "En concert",
     mots: ["Orelsan","Sinsemilia","Macklemore","Chappell Roan","Céline Dion","Theodora","Gorillaz","Naaman","Danyl","Shay","Mika","PLK"],
     colonnes: 8, lignes: 12,
-    graine: 3,
+    graine: 1673,
     indices: 4,
     fin: "Douze artistes, des centaines de chansons, et sûrement quelques acouphènes.",
   },
@@ -271,7 +271,7 @@ const G = GRILLES[KEY];
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const norm = w => w.normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase().replace(/Œ/g,"OE").replace(/Æ/g,"AE").replace(/[^A-Z]/g,"");
-const STORE = "fil2-" + KEY;
+const STORE = "fil3-" + KEY;
 
 let words, display, spanIdx, puzzle, found = new Map(), hinted = [], hintsLeft = HINTS, path = [], drag = null;
 
@@ -310,6 +310,63 @@ function flash(text, cls){
   clearTimeout(flash.t); flash.t = setTimeout(() => { el.className = "current"; el.textContent = path.map(c => puzzle.letters[c]).join(""); }, 1300);
 }
 
+
+/* ---- plusieurs chemins possibles pour un même mot ----
+   Si un mot est tracé avec d'autres lettres que prévu, on l'accepte à condition
+   que les mots restants puissent encore remplir le reste de la grille. */
+const NBR = c => { const x = c % W, y = (c / W) | 0, o = [];
+  for (let dy=-1; dy<=1; dy++) for (let dx=-1; dx<=1; dx++){ if (!dx && !dy) continue; const a = x+dx, b = y+dy; if (a>=0 && a<W && b>=0 && b<H) o.push(b*W+a); }
+  return o; };
+function pathsFor(word, free, mustInclude, cap){
+  const out = [], used = new Uint8Array(N), p = [], L = puzzle.letters;
+  const forms = word === [...word].reverse().join("") ? [word] : [word, [...word].reverse().join("")];
+  for (const f of forms){
+    const dfs = (c, k) => {
+      if (out.length >= cap || used[c] || !free[c] || L[c] !== f[k]) return;
+      used[c] = 1; p.push(c);
+      if (k === f.length - 1){ if (mustInclude < 0 || p.includes(mustInclude)) out.push(f === word ? p.slice() : p.slice().reverse()); }
+      else for (const n of NBR(c)) dfs(n, k+1);
+      used[c] = 0; p.pop();
+    };
+    for (let c=0; c<N; c++) if (free[c]) dfs(c, 0);
+  }
+  return out;
+}
+function retile(free, rest, budget = {n: 60000}){
+  if (!rest.length) return free.every(v => !v) ? {} : null;
+  if (--budget.n < 0) return null;
+  // la case libre la plus contrainte
+  let best = null;
+  for (let c=0; c<N && (!best || best.opts.length > 1); c++){
+    if (!free[c]) continue;
+    const opts = [];
+    for (const wi of rest) for (const pth of pathsFor(words[wi], free, c, 12)) opts.push([wi, pth]);
+    if (!best || opts.length < best.opts.length) best = {c, opts};
+    if (!opts.length) return null;
+  }
+  if (!best) return null;
+  for (const [wi, pth] of best.opts){
+    pth.forEach(c => free[c] = false);
+    const sub = retile(free, rest.filter(x => x !== wi), budget);
+    pth.forEach(c => free[c] = true);
+    if (sub){ sub[wi] = pth; return sub; }
+    if (budget.n < 0) return null;
+  }
+  return null;
+}
+function tryAlternate(idx, p){
+  const free = Array(N).fill(true);
+  found.forEach(fp => fp.forEach(c => free[c] = false));
+  if (p.some(c => !free[c])) return false;
+  p.forEach(c => free[c] = false);
+  const rest = words.map((_,i) => i).filter(i => i !== idx && !found.has(i));
+  const sol = retile(free, rest);
+  if (!sol) return false;
+  puzzle.paths[idx] = p.slice();
+  for (const k in sol) puzzle.paths[+k] = sol[k];
+  return true;
+}
+
 function submit(){
   if (!path.length) return;
   const word = path.map(c => puzzle.letters[c]).join("");
@@ -326,9 +383,26 @@ function submit(){
     if (idx === spanIdx && found.size < words.length) confetti(.35);
     return;
   }
+  // même mot tracé avec d'autres lettres : accepté si le reste de la grille reste faisable
+  const alt = words.findIndex((w,i) => (w === word || w === rev) && !found.has(i));
+  if (alt >= 0 && tryAlternate(alt, p)){
+    found.set(alt, p); save(); draw();
+    p.forEach((c,k) => setTimeout(() => { const el = document.querySelector(`.cell[data-c="${c}"]`); if (el){ el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); } }, k*45));
+    flash(alt === spanIdx ? "Le fil d'or !" : display[alt], alt === spanIdx ? "gold" : "good");
+    if (alt === spanIdx && found.size < words.length) confetti(.35);
+    return;
+  }
+  // sinon, le mot est quand même compté : on révèle simplement son vrai emplacement
+  if (alt >= 0){
+    const real = puzzle.paths[alt];
+    found.set(alt, real.slice()); save(); draw();
+    real.forEach((c,k) => setTimeout(() => { const el = document.querySelector(`.cell[data-c="${c}"]`); if (el){ el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); } }, k*45));
+    flash(alt === spanIdx ? "Le fil d'or ! (il était juste à côté)" : `${display[alt]}, juste à côté`, alt === spanIdx ? "gold" : "good");
+    if (alt === spanIdx && found.size < words.length) confetti(.35);
+    return;
+  }
   draw();
-  const same = words.findIndex(w => w === word || w === rev);
-  flash(same >= 0 && !found.has(same) ? "Bon mot, autre chemin" : "Pas dans le thème", "bad");
+  flash(found.has(words.findIndex(w => w === word || w === rev)) ? "Déjà trouvé" : "Pas dans le thème", "bad");
 }
 
 /* ---- saisie : glisser ou toucher ---- */
@@ -398,7 +472,11 @@ function init(){
   puzzle = makeGenerator(W, H)(words, spanIdx, G.graine || 1);
   if (puzzle.error){ $("board").outerHTML = `<div class="error">${esc(puzzle.error)}</div>`; $("actions").hidden = true; return; }
   $("cells").innerHTML = puzzle.letters.map((l,c) => `<button class="cell" type="button" data-c="${c}" aria-label="${l}"><span>${l}</span></button>`).join("");
-  load(); finish.loaded = found.size === words.length; draw(); finish.loaded = false; fit();
+  load();
+  { let differs = false; found.forEach((fp, i) => { const sp = puzzle.paths[i]; if (!sp || sp.length !== fp.length || !fp.every(c => sp.includes(c))) differs = true; });
+    if (differs){ const free = Array(N).fill(true); found.forEach((fp, i) => { fp.forEach(c => free[c] = false); puzzle.paths[i] = fp.slice(); });
+      const sol = retile(free, words.map((_,i) => i).filter(i => !found.has(i))); if (sol) for (const k in sol) puzzle.paths[+k] = sol[k]; } }
+  finish.loaded = found.size === words.length; draw(); finish.loaded = false; fit();
 }
 /* ---- taille : la grille tient dans l'écran ---- */
 function fit(){

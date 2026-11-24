@@ -9,7 +9,7 @@
 <link rel="icon" id="fav" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%2312241f%22/%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%2258%22%20height%3D%2258%22%20rx%3D%2211%22%20fill%3D%22none%22%20stroke%3D%22%23c9a968%22%20stroke-width%3D%222%22%20opacity%3D%22.55%22/%3E%3Cpath%20d%3D%22M32%2011l5.6%2013%2014.1%201.2-10.7%209.3%203.2%2013.8L32%2040.9l-12.2%207.4%203.2-13.8-10.7-9.3%2014.1-1.2z%22%20fill%3D%22%23ecd9a6%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Jost:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Hanken+Grotesk:ital,wght@0,300..700;1,300..700&display=swap">
 <style>
 /* Concept : une grille de papier ivoire posée sur le velours vert du calendrier ; la définition active flotte au-dessus. */
 :root{
@@ -17,8 +17,8 @@
   --line:rgba(201,169,104,.32); --gold:#c9a968; --gold-hi:#ecd9a6;
   --ink:#efe9dc; --muted:#8ea198; --paper:#f2ece0; --paper-ink:#1c2a24; --berry:#7d2430;
   --word:#ecdcae; --cell-on:#e2bf6a; --bad:#b4404d; --good:#2f6b52;
-  --f-display:"Bodoni Moda","Didot","Times New Roman",serif;
-  --f-body:"Jost","Futura",system-ui,sans-serif;
+  --f-display:"Gilda Display","Didot",Georgia,serif;
+  --f-body:"Hanken Grotesk",system-ui,sans-serif;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -30,8 +30,8 @@ body{background:radial-gradient(110% 60% at 50% -5%,var(--pine-hi) 0%,var(--nigh
 #snow{z-index:0} #confetti{z-index:20}
 .wrap{position:relative;z-index:1;max-width:980px;margin:0 auto}
 header{padding-block:18px 10px;display:grid;gap:6px;text-align:center;justify-items:center}
-.eyebrow{font-weight:400;letter-spacing:.32em;text-transform:uppercase;font-size:11px;color:var(--gold)}
-h1{margin:0;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:clamp(26px,6vw,40px);line-height:1.05;text-wrap:balance}
+.eyebrow{font-weight:400;letter-spacing:0;text-transform:none;font-size:12px;color:var(--gold)}
+h1{margin:0;font-family:var(--f-display);font-style:normal;font-weight:400;font-size:clamp(26px,6vw,40px);line-height:1.05;text-wrap:balance}
 h1 em{font-style:normal;font-weight:500;color:var(--gold-hi)}
 .progress{font-size:13.5px;color:var(--muted)} .progress b{color:var(--ink);font-weight:500}
 
@@ -41,8 +41,8 @@ h1 em{font-style:normal;font-weight:500;color:var(--gold-hi)}
 
 .clue-bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;width:100%;max-width:620px;display:flex;align-items:center;gap:8px;
   background:var(--paper);color:var(--paper-ink);border-radius:3px;padding:8px 8px;box-shadow:0 10px 24px -14px #000}
-.clue-bar .num{flex:none;font-weight:600;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--berry);min-width:44px;text-align:center}
-.clue-bar .txt{flex:1;min-width:0;font-family:var(--f-display);font-style:italic;font-size:16.5px;line-height:1.25}
+.clue-bar .num{flex:none;font-weight:600;font-size:12px;letter-spacing:0;text-transform:none;color:var(--berry);min-width:44px;text-align:center}
+.clue-bar .txt{flex:1;min-width:0;font-family:var(--f-display);font-style:normal;font-size:16.5px;line-height:1.25}
 .clue-bar button{flex:none;width:34px;height:34px;border:0;border-radius:2px;background:transparent;color:var(--paper-ink);font-size:20px;cursor:pointer}
 .clue-bar button:focus-visible{outline:2px solid var(--berry)}
 
@@ -61,13 +61,13 @@ h1 em{font-style:normal;font-weight:500;color:var(--gold-hi)}
 .cell.inword.solved{background:var(--word)} .cell.on.solved{background:var(--cell-on)}
 
 .actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
-.btn{font-family:var(--f-body);font-weight:400;font-size:12px;letter-spacing:.22em;text-transform:uppercase;border-radius:2px;padding:10px 14px;cursor:pointer;background:transparent;color:var(--ink);border:1px solid rgba(239,233,220,.3)}
+.btn{font-family:var(--f-body);font-weight:400;font-size:12px;letter-spacing:0;text-transform:none;border-radius:2px;padding:10px 14px;cursor:pointer;background:transparent;color:var(--ink);border:1px solid rgba(239,233,220,.3)}
 .btn:disabled{opacity:.35;cursor:default}
 .btn:focus-visible{outline:1px solid #fff;outline-offset:3px}
 
 .clues{display:grid;gap:18px;min-width:0}
 @media (max-width:820px){.clues{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}}
-.clues h2{margin:0 0 6px;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:22px;color:var(--gold-hi)}
+.clues h2{margin:0 0 6px;font-family:var(--f-display);font-style:normal;font-weight:400;font-size:22px;color:var(--gold-hi)}
 .clues ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
 .clues li{display:flex;gap:10px;padding:6px 8px;border-radius:2px;cursor:pointer;font-size:14.5px;line-height:1.35}
 .clues li b{flex:none;width:22px;text-align:right;font-weight:500;color:var(--gold)}
@@ -75,14 +75,17 @@ h1 em{font-style:normal;font-weight:500;color:var(--gold-hi)}
 .clues li.on{background:rgba(236,217,166,.14)}
 .clues li.done span{color:var(--muted);text-decoration:line-through;text-decoration-color:rgba(142,161,152,.5)}
 .end{margin-top:6px;text-align:center;display:grid;gap:8px;justify-items:center}
-.end h2{margin:0;font-family:var(--f-display);font-style:italic;font-weight:400;font-size:30px;color:var(--gold-hi)}
+.end h2{margin:0;font-family:var(--f-display);font-style:normal;font-weight:400;font-size:30px;color:var(--gold-hi)}
 .end p{margin:0;color:#cfc8b8;max-width:38ch}
-.end a{color:var(--gold-hi);font-size:12px;letter-spacing:.24em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid var(--gold);padding-bottom:2px}
+.end a{color:var(--gold-hi);font-size:12px;letter-spacing:0;text-transform:none;text-decoration:none;border-bottom:1px solid var(--gold);padding-bottom:2px}
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,10px);opacity:0;transition:.25s;z-index:30;
   background:var(--paper);color:var(--paper-ink);padding:9px 16px;border-radius:2px;font-weight:500;font-size:14px;pointer-events:none;max-width:calc(100% - 32px)}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 .error{border:1px dashed var(--line);padding:18px;border-radius:3px;color:#e3c0c0;text-align:center}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+:root{font-synthesis:none}
+::selection{background:#7d2b35;color:#f6f0e4}
+.eyebrow{display:none!important}
 </style>
 
 </head>
@@ -130,7 +133,7 @@ const RETOUR = "index.html";
 const GRILLES = {
   jeanne: {
     titre: "Rien que <em>pour toi</em>",
-    graine: 6,
+    graine: 10,
     indices: 6,
     fin: "Grille complète. Tu connais ta vie par cœur, c'est rassurant.",
     mots: [
@@ -160,7 +163,7 @@ const GRILLES = {
   },
   famille: {
     titre: "Spécial <em>famille</em>",
-    graine: 29,
+    graine: 106,
     indices: 4,
     fin: "Grille complète. La famille valide.",
     mots: [
@@ -176,6 +179,9 @@ const GRILLES = {
       {mot:"Ernesto",      def:"Prénom de tous les robots de piscine"},
       {mot:"Tuck",         def:"Voleur de boisson à Disneyland Paris, frère"},
       {mot:"Zlatan",       def:"Chat de Fennoscandie"},
+      {mot:"Puffle",       def:"Animal rond et coloré vivant dans un igloo"},
+      {mot:"Vint",         def:"Conjugaison du verbe « venir » à la troisième personne du singulier en 2004"},
+      {mot:"Corvus",       def:"Célestellien déchu semant la terreur sur Terre"},
     ],
   },
 };
@@ -189,7 +195,7 @@ function makeCrossword(words, seed, tries=400){
   for (let attempt=0; attempt<tries; attempt++){
     const grid = new Map(), placed = [];
     const key = (x,y) => x+","+y, at = (x,y) => grid.get(key(x,y));
-    const order = words.map((w,i) => i).sort((i,j) => words[j].length - words[i].length + (R()-.5)*3);
+    const jit = words.map(() => (R()-.5)*3), order = words.map((w,i) => i).sort((i,j) => words[j].length - words[i].length + jit[j] - jit[i]);
     const canPlace = (w, x, y, dir) => {
       const dx = dir ? 0 : 1, dy = dir ? 1 : 0; let cross = 0;
       if (at(x-dx, y-dy) || at(x+dx*w.length, y+dy*w.length)) return -1;
@@ -231,9 +237,11 @@ function makeCrossword(words, seed, tries=400){
         const score = c => {
           const dx = c.dir ? 0 : 1, dy = c.dir ? 1 : 0, ex = c.x+dx*(w.length-1), ey = c.y+dy*(w.length-1);
           const W = Math.max(maxX,ex)-Math.min(minX,c.x)+1, H = Math.max(maxY,ey)-Math.min(minY,c.y)+1;
-          return c.cr*6 - Math.max(W,H)*1.5 - Math.abs(W-H)*.5 + R()*2;
+          return c.cr*6 - Math.max(W,H)*1.5 - Math.abs(W-H)*.5;
         };
-        cands.sort((u,v) => score(v) - score(u));
+        // note calculée une seule fois par candidat : sinon la disposition change d'un navigateur à l'autre
+        cands.forEach(c => { c.s = score(c) + R()*2; });
+        cands.sort((u,v) => v.s - u.s);
         const c = cands[0]; put(i, c.x, c.y, c.dir); pending.splice(p,1); p--; progress = true;
       }
     }

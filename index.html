@@ -257,6 +257,8 @@ footer{margin-top:28px;font-size:12px;letter-spacing:0;color:var(--muted)}
 .note h2{font-family:var(--f-display);font-style:normal;font-weight:400;font-size:30px;line-height:1.1;margin:0 0 14px;text-wrap:balance;letter-spacing:-.005em}
 .note .rule{width:36px;height:1px;background:var(--foil);margin:0 auto 16px}
 .note .body{display:grid;gap:12px}
+.note .vid.yt{position:relative;aspect-ratio:9/16;max-height:60vh;margin-inline:auto;overflow:hidden}.note .vid.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.note .vid{display:block;width:100%;max-height:60vh;margin:16px 0 4px;border-radius:6px;background:#000}
 .anim{margin:16px 0 4px}
 .anim svg{width:100%;height:auto;display:block;color:#1e1a16}
 .anim .ink{fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1;animation:ink .9s ease-out forwards;animation-delay:calc(var(--d,0) * 1s)}
@@ -2768,9 +2770,9 @@ const JOURS = [
   /* 4 */ {cat:"CAD", tier:"or", quoi:"Origami", nom:"Origami", acces:"paquet",
    titre:"Plié pour toi",
    texte:"Un origami fait main, avec beaucoup de patience et un nombre de ratés que je préfère garder secret."},
-  /* 5 */ {cat:"ANN", tier:"fete", fete:"Marie", sceau:"M", quoi:"", nom:"Marie", acces:"",
+  /* 5 */ {cat:"ANN", tier:"fete", fete:"Marie", sceau:"M", quoi:"", nom:"Marie", acces:"", video:"video-7ven.mp4",
    titre:"L'anniversaire de Marie",
-   texte:["Aujourd'hui, c'est l'anniversaire de ma sœur Marie.","Ton cadeau du jour : on se programme une sortie à faire bientôt. Un théâtre, un nouveau café ou une expo, c'est toi qui choisis."]},
+   texte:["Aujourd'hui, c'est l'anniversaire de ma sœur Marie.","Et ton cadeau du jour vient des filles du bureau. Les 7ven Girls, enfin, les six autres."]},
   /* 6 */ {cat:"CAD", tier:"or", quoi:"Un livre", nom:"Livre", acces:"paquet",
    titre:"Un livre pour les soirées d'hiver",
    texte:"Un petit livre de poche (lu en 1 jour)."},
@@ -2795,9 +2797,9 @@ const JOURS = [
   /* 13 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"mots.html#famille",
    titre:"Mots croisés, spécial famille",
    texte:"Une grille faite par ta famille. Si tu bloques, ou si tu tombes sur des secrets inavoués, c'est à eux qu'il faudra t'en prendre."},
-  /* 14 */ {cat:"CAD", tier:"or", quoi:"", nom:"7ven Girls", acces:"",
-   titre:"De la part des 7ven Girls",
-   texte:"Aujourd'hui, c'est une petite attention des filles du bureau. Les 7ven Girls, enfin, les six autres."},
+  /* 14 */ {cat:"INV", tier:"or", quoi:"", nom:"Sortie", acces:"",
+   titre:"Une sortie à programmer",
+   texte:"Aujourd'hui, on se programme une sortie à faire bientôt. Un théâtre, un nouveau café ou une expo, c'est toi qui choisis."},
   /* 15 */ {cat:"CAD", tier:"or", quoi:"Un livre", nom:"Livre", acces:"paquet",
    titre:"Un deuxième livre",
    texte:"Parce qu'un seul ne suffit pas pour tenir jusqu'à Noël."},
@@ -2807,7 +2809,7 @@ const JOURS = [
   /* 17 */ {cat:"MUS", tier:"givre", quoi:"Wrapped", nom:"Wrapped", acces:"lien", lien:"wrapped.html",
    titre:"Toi, en concert",
    texte:"Quinze ans dans la foule, résumés en quelques chiffres. Touche l'écran pour avancer."},
-  /* 18 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"",
+  /* 18 */ {cat:"JEU", tier:"or", quoi:"Mots croisés", nom:"Mots croisés", acces:"lien", lien:"mots.html#copains",
    titre:"Mots croisés, spécial copains",
    texte:"Une grille réalisée par tes potes, avec leurs définitions, leurs souvenirs."},
   /* 19 */ {cat:"ANN", tier:"fete", fete:"Marie-Françoise", sceau:"MF", quoi:"Wordle", nom:"Marie-Françoise", acces:"lien", lien:"wordle.html#jeanne",
@@ -2900,6 +2902,13 @@ const LOCK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-
 const STAR = '<svg class="star" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5l1.7 7.1 7.3.6-6.2 3.9 2.3 7-5.1-4.8-5.1 4.8 2.3-7-6.2-3.9 7.3-.6z"/></svg>';
 const BIGSTAR = '<svg class="bigstar" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true"><path d="M24 2v44M2 24h44M8.5 8.5l31 31M39.5 8.5l-31 31"/><path d="M24 10l3 11 11 3-11 3-3 11-3-11-11-3 11-3z" fill="currentColor" stroke="none"/></svg>';
 const CORNER = c => `<svg class="corner ${c}" viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true"><path d="M1 25V8a7 7 0 0 1 7-7h17"/><path d="M5 25V10a5 5 0 0 1 5-5h15" opacity=".5"/><circle cx="9" cy="9" r="1.6" fill="currentColor"/></svg>`;
+// vidéo d'une case : lien YouTube (non répertorié) ou fichier .mp4 posé à côté de index.html
+function VIDEO(j){
+  if (!j.video) return "";
+  const yt = /(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([\w-]{11})/.exec(j.video);
+  if (yt) return `<div class="vid yt"><iframe src="https://www.youtube-nocookie.com/embed/${yt[1]}?rel=0&playsinline=1" title="Vidéo" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen loading="lazy"></iframe></div>`;
+  return `<video class="vid" src="${esc(j.video)}"${j.poster ? ` poster="${esc(j.poster)}"` : ""} controls playsinline preload="metadata" onerror="this.hidden=true"></video>`;
+}
 const ANIMS = {sushi:`<div class="anim" aria-label="Comment faire des makis, en quatre dessins"><svg viewBox="0 0 300 230" role="img"><g transform="translate(0 0)"><path class="ink" pathLength="1" style="--d:0.2" d="M24 32h102v58H24z"/><path class="ink" pathLength="1" style="--d:0.7" d="M30 56q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0V86H30z"/><path class="ink" pathLength="1" style="--d:1.1" d="M36 66l3 -1"/><path class="ink" pathLength="1" style="--d:1.1300000000000001" d="M48 72l3 -1"/><path class="ink" pathLength="1" style="--d:1.1600000000000001" d="M60 64l3 -1"/><path class="ink" pathLength="1" style="--d:1.1900000000000002" d="M72 74l3 -1"/><path class="ink" pathLength="1" style="--d:1.2200000000000002" d="M84 67l3 -1"/><path class="ink" pathLength="1" style="--d:1.25" d="M96 72l3 -1"/><path class="ink" pathLength="1" style="--d:1.28" d="M108 65l3 -1"/><path class="ink" pathLength="1" style="--d:1.31" d="M42 80l3 -1"/><path class="ink" pathLength="1" style="--d:1.34" d="M66 82l3 -1"/><path class="ink" pathLength="1" style="--d:1.37" d="M90 80l3 -1"/><path class="ink" pathLength="1" style="--d:1.4000000000000001" d="M112 79l3 -1"/><path class="ink" pathLength="1" style="--d:1.4300000000000002" d="M54 78l3 -1"/><text class="cap" style="--d:1.0" x="75" y="104" text-anchor="middle"><tspan class="num">1. </tspan>Le riz sur l'algue</text></g><g transform="translate(150 0)"><path class="ink" pathLength="1" style="--d:2.0" d="M24 32h102v58H24z"/><path class="ink" pathLength="1" style="--d:2.2" d="M30 56q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0q4 -6 8 0V86H30z"/><path class="ink" pathLength="1" style="--d:2.6" d="M34 62h82a4 4 0 0 1 0 8H34a4 4 0 0 1 0-8z"/><path class="ink" pathLength="1" style="--d:2.9" d="M34 74h80M36 78h76"/><path class="ink" pathLength="1" style="--d:3.1" d="M60 64q3 2 6 0M84 64q3 2 6 0"/><text class="cap" style="--d:3.0" x="75" y="104" text-anchor="middle"><tspan class="num">2. </tspan>La garniture</text></g><g transform="translate(0 120)"><path class="ink" pathLength="1" style="--d:3.8" d="M18 72h116v20H18z"/><path class="ink" pathLength="1" style="--d:4.0" d="M26 72v20M34 72v20M42 72v20M50 72v20M58 72v20M66 72v20M74 72v20M82 72v20M90 72v20M98 72v20M106 72v20M114 72v20M122 72v20"/><path class="ink" pathLength="1" d="M40 44h66a8 14 0 0 1 0 28H40a8 14 0 0 1 0-28z" style="--d:4.5;fill:var(--paper)"/><path class="ink" pathLength="1" style="--d:4.8" d="M106 44a8 14 0 0 0 0 28a8 14 0 0 0 0-28M106 51a4 7 0 0 0 0 14a2 4 0 0 0 0-8"/><path class="ink" pathLength="1" style="--d:5.1" d="M58 34q17 -14 34 0"/><path class="ink" pathLength="1" style="--d:5.3" d="M86 29l6 5-7 2"/><text class="cap" style="--d:5.0" x="75" y="104" text-anchor="middle"><tspan class="num">3. </tspan>On roule</text></g><g transform="translate(150 120)"><path class="ink" pathLength="1" style="--d:5.8" d="M10 92h130"/><path class="ink" pathLength="1" style="--d:6.0" d="M27 70a15 15 0 1 0 30 0a15 15 0 1 0 -30 0"/><path class="ink" pathLength="1" style="--d:6.2" d="M32 70a10 10 0 1 0 20 0a10 10 0 1 0 -20 0"/><path class="ink" pathLength="1" style="--d:6.35" d="M38 69h8v4h-8z"/><path class="ink" pathLength="1" style="--d:6.3" d="M63 72a15 15 0 1 0 30 0a15 15 0 1 0 -30 0"/><path class="ink" pathLength="1" style="--d:6.5" d="M68 72a10 10 0 1 0 20 0a10 10 0 1 0 -20 0"/><path class="ink" pathLength="1" style="--d:6.6499999999999995" d="M74 71h8v4h-8z"/><path class="ink" pathLength="1" style="--d:6.6" d="M97 70a15 15 0 1 0 30 0a15 15 0 1 0 -30 0"/><path class="ink" pathLength="1" style="--d:6.8" d="M102 70a10 10 0 1 0 20 0a10 10 0 1 0 -20 0"/><path class="ink" pathLength="1" style="--d:6.949999999999999" d="M108 69h8v4h-8z"/><path class="ink" pathLength="1" style="--d:7.0" d="M70 18l60 34M78 14l58 32"/><text class="cap" style="--d:7.4" x="75" y="104" text-anchor="middle"><tspan class="num">4. </tspan>On coupe, on mange</text></g></svg></div>`};
 const SPRIG = '<svg class="sprig" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.1" aria-hidden="true"><path d="M4 30c14-2 26-10 28-24M60 30C46 28 34 20 32 6"/><path d="M12 28c-1-6 2-11 8-13-1 6-3 10-8 13zM20 22c0-6 4-10 10-11-2 6-5 9-10 11zM52 28c1-6-2-11-8-13 1 6 3 10 8 13zM44 22c0-6-4-10-10-11 2 6 5 9 10 11z"/><circle cx="32" cy="30" r="2.6" fill="currentColor" stroke="none"/><circle cx="27.5" cy="33" r="2.2" fill="currentColor" stroke="none"/><circle cx="36.5" cy="33" r="2.2" fill="currentColor" stroke="none"/></svg>';
 const ORDER = [7,14,2,21,10,18,1,23,5,12,16,3,20,9,24,6,13,19,11,4,22,8,15,17];
@@ -3175,6 +3184,7 @@ function buildNote(d){
       <h2>${esc(j.titre)}</h2>
       <div class="rule"></div>
       <div class="body">${paras(j.texte)}</div>
+      ${VIDEO(j)}
       ${encart(d)}
       ${CONFIG.signature ? `<div class="sig">${esc(CONFIG.signature)}</div>` : ""}
       <div class="seal" aria-hidden="true">${esc(j.sceau || j.fete[0])}</div>`;
@@ -3187,6 +3197,7 @@ function buildNote(d){
     <div class="rule"></div>
     <div class="body">${paras(j.texte)}</div>
     ${j.anim && ANIMS[j.anim] ? ANIMS[j.anim] : ""}
+    ${VIDEO(j)}
       ${encart(d)}
     ${CONFIG.signature ? `<div class="sig">${esc(CONFIG.signature)}</div>` : ""}
     ${j.tier === "givre" ? `<div class="seal" aria-hidden="true">${ROMAN(d)}</div>` : ""}`;
@@ -3200,6 +3211,8 @@ function openCase(d, already){
   FX.clear(); FX.palette(j.tier);
   buildNote(d); fillQR();
   document.getElementById("packN").textContent = d;
+  document.querySelectorAll("#note video").forEach(v => v.pause());
+  document.querySelectorAll("#note .yt").forEach(v => v.remove());
   reveal.hidden = true; closeBtn.hidden = true; env.hidden = true; env.className = "envelope"; note.classList.remove("in");
   if (already){
     slot.hidden = true; openBtn.hidden = true; ov.classList.add("calm");
